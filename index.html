@@ -607,7 +607,7 @@
     </div>
   </div>
 
-  <footer id="log-terminal" class="fixed bottom-0 left-0 right-0 glass border-t border-bd shadow-2xl z-40 flex flex-col h-40 transition-all duration-300">
+  <footer id="log-terminal" class="fixed bottom-0 left-0 right-0 glass border-t border-bd shadow-2xl z-40 flex flex-col h-9 transition-all duration-300">
     <div onclick="toggleTerminalCollapse()" class="px-6 py-2 bg-bs border-b border-bd flex justify-between items-center cursor-pointer select-none">
       <div class="flex items-center gap-2">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -615,7 +615,7 @@
       </div>
       <div class="flex items-center gap-3">
         <span class="text-[9px] font-mono text-txs">christinaslibraryks@gmail.com</span>
-        <button type="button" class="text-txs hover:text-tx"><i data-lucide="chevrons-down" id="terminal-toggle-icon" class="w-4.5 h-4.5"></i></button>
+        <button type="button" class="text-txs hover:text-tx"><i data-lucide="chevrons-down" id="terminal-toggle-icon" class="w-4.5 h-4.5 rotate-180"></i></button>
       </div>
     </div>
     <div id="terminal-feed" class="p-4 overflow-y-auto flex-grow font-mono text-[10px] space-y-1.5 bg-black/95 select-text text-zinc-300 leading-normal">
@@ -1144,7 +1144,6 @@
       });
       tbody.innerHTML = html;
 
-      // Historically closed lending records parsing template
       const archiveBox = document.getElementById('lending-archive-list');
       if (archiveBox) {
         if (!state.lendingLog || state.lendingLog.length === 0) {
@@ -1209,9 +1208,27 @@
       const btn = document.getElementById('btn-sync-trigger'); 
       if (btn) { btn.disabled = true; btn.textContent = "Processing sync payload handshakes..."; }
       addLog("Preparing bidirectional sync payload matrix strings...", "info");
+      
       const endpoint = "https://script.google.com/macros/s/AKfycbwe1j8HFRh1KxAr9YZfFaAbUiIlYm759tIOQmSB51UafE4RPEkmlaxo57FEwtI0BkvzzA/exec";
       try {
-        const mappedPayload = state.books.map(b => ({ id: b.id, isbnUid: b.isbn || '', title: b.title || 'Untitled', authors: b.author || 'Unknown', genre: b.genre || 'General', pages: parseInt(b.totalPages) || 0, currentPage: parseInt(b.currentPage) || 0, readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", borrower: b.lendedTo || '', dateLent: b.dateLent || '', coverUrl: b.coverUrl || '', comment: b.notes || '', status: b.status || 'Active' }));
+        // FIXED: Pack ALL books (including Deleted ones) into payload matrix so sheets knows to flag them too
+        const mappedPayload = state.books.map(b => ({ 
+          id: b.id, 
+          isbnUid: b.isbn || '', 
+          title: b.title || 'Untitled', 
+          authors: b.author || 'Unknown', 
+          genre: b.genre || 'General', 
+          pages: parseInt(b.totalPages) || 0, 
+          currentPage: parseInt(b.currentPage) || 0, 
+          readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), 
+          lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", 
+          borrower: b.lendedTo || '', 
+          dateLent: b.dateLent || '', 
+          coverUrl: b.coverUrl || '', 
+          comment: b.notes || '', 
+          status: b.status || 'Active' 
+        }));
+
         const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: mappedPayload }) });
         const responseText = await response.text(); 
         const serverData = JSON.parse(responseText);
@@ -1219,6 +1236,7 @@
         if (serverData.status === "success" && serverData.books) {
           addLog("Bilateral synchronizer successfully balanced database lines.", "success"); 
           let updatedBooksList = [...state.books];
+          
           serverData.books.forEach(cloudBook => {
             const cloudIsbn = String(cloudBook.isbnuid || cloudBook.isbnUid || '').trim(); 
             const cloudTitle = String(cloudBook.title || '').trim().toLowerCase();
@@ -1227,8 +1245,9 @@
             
             if (existingIdx >= 0) {
               const localBook = updatedBooksList[existingIdx];
-              if (localBook.status === "Deleted" || isCloudDeleted) { updatedBooksList[existingIdx] = { ...localBook, status: "Deleted" }; }
-              else {
+              if (localBook.status === "Deleted" || isCloudDeleted) { 
+                updatedBooksList[existingIdx] = { ...localBook, status: "Deleted" }; 
+              } else {
                 const cloudCover = cloudBook.coverurl || cloudBook.coverUrl || ''; 
                 const secureCover = (localBook.coverUrl && !localBook.coverUrl.includes('placeholder') && localBook.coverUrl !== 'N/A') ? localBook.coverUrl : cloudCover;
                 updatedBooksList[existingIdx] = { ...localBook, currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0, totalPages: parseInt(cloudBook.pages) || localBook.totalPages, lendedTo: cloudBook.lendingstatus === "Lent" ? (cloudBook.borrower || "Guest") : '', dateLent: cloudBook.datelent || cloudBook.dateLent || '', notes: cloudBook.comment || localBook.notes, coverUrl: secureCover, status: "Active" };
@@ -1239,7 +1258,9 @@
               }
             }
           });
-          state.books = updatedBooksList; 
+          
+          // Pure local filter cleanup: drop fully confirmed deleted rows out of memory entirely
+          state.books = updatedBooksList.filter(b => b.status !== "Deleted"); 
           saveCacheData();
         }
       } catch (err) { 
@@ -1265,7 +1286,8 @@
       renderLendingModule(); 
     }
 
-    let terminalCollapsed = false;
+    // FIXED: Preserves the minimized state profile correctly when clicked
+    let terminalCollapsed = true; 
     function toggleTerminalCollapse() {
       const term = document.getElementById('log-terminal'); 
       const icon = document.getElementById('terminal-toggle-icon'); 
