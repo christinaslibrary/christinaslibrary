@@ -65,11 +65,16 @@
       overflow-x: hidden;
     }
 
+    /* Multi-layered elegant paper depth shadow */
     .glass {
-      background: var(--card-bg, rgba(255, 255, 255, 0.85));
+      background: var(--card-bg, rgba(255, 255, 255, 0.92));
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--bd);
+      box-shadow: 
+        0 1px 2px rgba(0,0,0,0.01),
+        0 8px 24px -4px rgba(44, 30, 33, 0.03),
+        0 16px 32px -8px rgba(44, 30, 33, 0.03);
     }
     
     .theme-dark .glass {
@@ -89,6 +94,34 @@
       background-color: var(--ac);
       color: var(--b);
       box-shadow: 0 4px 10px var(--g);
+    }
+
+    /* Intaglio card pressing outline framing effect */
+    #catalog-canvas > div {
+      outline: 1px dashed var(--bd);
+      outline-offset: -6px;
+      border-radius: 12px;
+    }
+
+    /* DYNAMIC EMBEDDED DRESSING COMPONENT */
+    .book-border-topper {
+      position: relative;
+      width: 100%;
+      height: 70px; 
+      margin-bottom: 24px;
+      border-radius: 12px;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      background-color: var(--bs);
+      opacity: 0.85;
+      
+      /* Smoothly blend top to bottom away into app context background */
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+      
+      /* Inline Data URI generating a seamless Ornate Victorian chain pattern */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30' viewBox='0 0 60 30'%3E%3Cpath d='M0 15 Q 15 0, 30 15 T 60 15 Q 45 30, 30 15 T 0 15 Z' fill='none' stroke='%232c1e21' stroke-width='1' opacity='0.15'/%3E%3Ccircle cx='30' cy='15' r='2' fill='%232c1e21' opacity='0.25'/%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-position: top center;
     }
   </style>
 </head>
@@ -135,6 +168,12 @@
       <div class="w-16 h-[1px] bg-ac mx-auto my-3 opacity-85"></div>
       <p class="font-sans italic text-xs text-txs">EST. 2026 • INVENTORIED ONLINE FOR CHRISTINASLIBRARY.COM</p>
     </header>
+
+    <div id="dynamic-topper-frame" class="book-border-topper flex items-center justify-center px-6">
+      <p id="dynamic-topper-quote" class="text-xs text-txs/70 font-display italic tracking-wide text-center transition-opacity duration-300">
+        “A room without books is like a body without a soul.” — Cicero
+      </p>
+    </div>
 
     <div class="glass rounded-2xl p-4 md:p-6 shadow-xl mb-6">
       
@@ -219,7 +258,7 @@
             </button>
 
             <div class="flex gap-1 border border-bd rounded-lg bg-b p-0.5">
-              <button onclick="setViewMode('grid')" id="btn-view-grid" class="p-1 px-2 rounded hover:bg-bd/25 text-tx" title="Grid View">
+              <button onclick="setViewMode('grid')" id="btn-view-grid" class="p-1 px-2 rounded bg-ac/20 text-tx" title="Grid View">
                 <i data-lucide="layout-grid" class="w-4 h-4"></i>
               </button>
               <button onclick="setViewMode('list')" id="btn-view-list" class="p-1 px-2 rounded hover:bg-bd/25 text-txs" title="List View">
@@ -375,7 +414,7 @@
               <thead class="bg-bs text-txs font-mono uppercase tracking-wider text-[10px] border-b border-bd">
                 <tr>
                   <th class="p-4">Lent Asset</th>
-                  <th class="p-4">Borrower name</th>
+                  <th class="p-4">Borrower Name</th>
                   <th class="p-4">Date Lent</th>
                   <th class="p-4">Active Days</th>
                   <th class="p-4 text-right">Actions</th>
@@ -454,7 +493,7 @@
               Host: christinaslibraryks@gmail.com
             </p>
             <div>
-              <button onclick="triggerResetAll()" class="bg-red-600 hover:bg-red-700 text-white font-mono text-[10px] py-1 px-3 rounded border border-transparent shadow transition mt-2">
+              <button onclick="triggerResetAll()" type="button" class="bg-red-600 hover:bg-red-700 text-white font-mono text-[10px] py-1 px-3 rounded border border-transparent shadow transition mt-2">
                 ☢️ Force Destructive Database Reset
               </button>
             </div>
@@ -576,7 +615,7 @@
       </div>
       <div class="flex items-center gap-3">
         <span class="text-[9px] font-mono text-txs">christinaslibraryks@gmail.com</span>
-        <button class="text-txs hover:text-tx"><i data-lucide="chevrons-down" id="terminal-toggle-icon" class="w-4.5 h-4.5"></i></button>
+        <button type="button" class="text-txs hover:text-tx"><i data-lucide="chevrons-down" id="terminal-toggle-icon" class="w-4.5 h-4.5"></i></button>
       </div>
     </div>
     <div id="terminal-feed" class="p-4 overflow-y-auto flex-grow font-mono text-[10px] space-y-1.5 bg-black/95 select-text text-zinc-300 leading-normal">
@@ -584,28 +623,18 @@
   </footer>
 
   <script>
-    // FIXED AUTO-ADVANCE & PIN FIELD EVENT SYSTEM
     function handlePinNavigation(current, nextFieldId, prevFieldId) {
-      // Zap non-numbers immediately to shield inputs
       current.value = current.value.replace(/[^0-9]/g, '');
-
-      // Trigger instant submission if fourth box fills up smoothly
       if (current.id === 'pin-4' && current.value.length === 1) {
         verifyInterlockPin();
         return;
       }
-
-      // Snap focus forward seamlessly
       if (current.value.length >= 1 && nextFieldId) {
         const next = document.getElementById(nextFieldId);
-        if (next) {
-          next.focus();
-          next.select();
-        }
+        if (next) { next.focus(); next.select(); }
       }
     }
 
-    // Attach native background keyboard backspace listener explicitly to each box
     window.addEventListener('DOMContentLoaded', () => {
       ['pin-1', 'pin-2', 'pin-3', 'pin-4'].forEach((id, idx, arr) => {
         const input = document.getElementById(id);
@@ -613,23 +642,15 @@
         input.addEventListener('keydown', (e) => {
           if (e.key === "Backspace" && input.value.length === 0 && idx > 0) {
             const prev = document.getElementById(arr[idx - 1]);
-            if (prev) {
-              prev.focus();
-              prev.select();
-            }
+            if (prev) { prev.focus(); prev.select(); }
           }
         });
       });
     });
 
     function verifyInterlockPin() {
-      const digit1 = document.getElementById('pin-1').value;
-      const digit2 = document.getElementById('pin-2').value;
-      const digit3 = document.getElementById('pin-3').value;
-      const digit4 = document.getElementById('pin-4').value;
-      const combinedPin = digit1 + digit2 + digit3 + digit4;
+      const combinedPin = document.getElementById('pin-1').value + document.getElementById('pin-2').value + document.getElementById('pin-3').value + document.getElementById('pin-4').value;
       const errorLabel = document.getElementById('pin-error-msg');
-
       if (combinedPin === "0316") {
         if (errorLabel) errorLabel.classList.add('hidden');
         document.getElementById('pin-lock-screen').classList.add('opacity-0', 'pointer-events-none');
@@ -640,27 +661,23 @@
         }, 500);
       } else {
         if (errorLabel) errorLabel.classList.remove('hidden');
-        ['pin-1', 'pin-2', 'pin-3', 'pin-4'].forEach(id => {
-          const input = document.getElementById(id);
-          if (input) input.value = '';
-        });
-        const first = document.getElementById('pin-1');
-        if (first) first.focus();
+        ['pin-1', 'pin-2', 'pin-3', 'pin-4'].forEach(id => { const i = document.getElementById(id); if (i) i.value = ''; });
+        const first = document.getElementById('pin-1'); if (first) first.focus();
       }
     }
 
-    let state = {
-      books: [],
-      wishlist: [],
+    let state = { 
+      books: [], 
+      wishlist: [], 
       lendingLog: [], 
-      currentTheme: 'rose',
-      activeTab: 'home',
-      viewMode: 'grid',
-      activeFilterStatus: 'all',
-      selectedRatingForm: 0,
-      activeModalBookId: null
+      currentTheme: 'rose', 
+      activeTab: 'home', 
+      viewMode: 'grid', 
+      activeFilterStatus: 'all', 
+      selectedRatingForm: 0, 
+      activeModalBookId: null 
     };
-
+    
     let searchTimeout = null;
 
     function loadCacheData() {
@@ -671,56 +688,57 @@
           if (!state.books) state.books = [];
           if (!state.wishlist) state.wishlist = [];
           if (!state.lendingLog) state.lendingLog = [];
-        } catch (e) {
-          console.error("Corrupted state profile context found.");
-          resetStateSchema();
+        } catch (e) { 
+          console.error("Corrupted local application cache state profile.");
+          resetStateSchema(); 
         }
-      } else {
-        resetStateSchema();
+      } else { 
+        resetStateSchema(); 
       }
     }
 
-    function resetStateSchema() {
-      state.books = [];
-      state.wishlist = [];
-      state.lendingLog = [];
-      saveCacheData();
+    function resetStateSchema() { 
+      state.books = []; 
+      state.wishlist = []; 
+      state.lendingLog = []; 
+      saveCacheData(); 
     }
 
-    function saveCacheData() {
-      localStorage.setItem('christinas_library_web_state', JSON.stringify(state));
+    function saveCacheData() { 
+      localStorage.setItem('christinas_library_web_state', JSON.stringify(state)); 
     }
 
     function addLog(msg, type = 'info') {
-      const feed = document.getElementById('terminal-feed');
+      const feed = document.getElementById('terminal-feed'); 
       if (!feed) return;
       const timeStr = new Date().toLocaleTimeString();
-      let colorClass = 'text-cyan-400';
+      let colorClass = 'text-cyan-400'; 
       let symbol = '✦';
+      
       if (type === 'success') { colorClass = 'text-emerald-400'; symbol = '✔'; }
       if (type === 'warning') { colorClass = 'text-amber-400'; symbol = '⚠️'; }
       if (type === 'error') { colorClass = 'text-rose-500'; symbol = '⚙️'; }
-
-      const logNode = document.createElement('div');
+      
+      const logNode = document.createElement('div'); 
       logNode.className = "flex items-start gap-2 border-b border-zinc-900/40 pb-0.5";
       logNode.innerHTML = `
         <span class="text-zinc-600 select-none flex-shrink-0">[${timeStr}]</span> 
         <span class="${colorClass} font-semibold flex-shrink-0">${symbol} [${type.toUpperCase()}]</span> 
         <span class="text-zinc-200 select-all">${msg}</span>
       `;
-      feed.appendChild(logNode);
+      feed.appendChild(logNode); 
       feed.scrollTop = feed.scrollHeight;
     }
 
     function setTheme(themeName) {
-      document.documentElement.className = '';
+      document.documentElement.className = ''; 
       document.documentElement.classList.add(`theme-${themeName}`);
-      state.currentTheme = themeName;
+      state.currentTheme = themeName; 
       saveCacheData();
       const marquee = document.getElementById('stadium-marquee');
-      if (marquee) {
-        if (themeName === 'wildcat') marquee.classList.remove('hidden');
-        else marquee.classList.add('hidden');
+      if (marquee) { 
+        if (themeName === 'wildcat') marquee.classList.remove('hidden'); 
+        else marquee.classList.add('hidden'); 
       }
     }
 
@@ -733,6 +751,19 @@
       });
       document.getElementById(`sect-${tabId}`).classList.remove('hidden');
       document.getElementById(`tab-${tabId}`).classList.add('tab-active');
+
+      const textNode = document.getElementById('dynamic-topper-quote');
+      if (textNode) {
+        textNode.style.opacity = 0;
+        setTimeout(() => {
+          if (tabId === 'home') textNode.textContent = "“A room without books is like a body without a soul.” — Cicero";
+          else if (tabId === 'add') textNode.textContent = "“An investment in knowledge pays the best interest.” — Benjamin Franklin";
+          else if (tabId === 'wishlist') textNode.textContent = "“The expectation of future volumes forms the horizon of the mind.”";
+          else if (tabId === 'lending') textNode.textContent = "“A book lent is a traveler sent on an unknown expedition.”";
+          else if (tabId === 'sync') textNode.textContent = "⚙️ BILATERAL PARITY LOOP DISPATCHER STATUS: ARMED AND SECURED";
+          textNode.style.opacity = 1;
+        }, 250);
+      }
       renderAll();
     }
 
@@ -749,253 +780,185 @@
       return stars;
     }
 
-    function setFormRating(v) {
-      state.selectedRatingForm = v;
-      document.getElementById('add-rating').value = v;
-      renderFormStars();
+    function setFormRating(v) { 
+      state.selectedRatingForm = v; 
+      document.getElementById('add-rating').value = v; 
+      renderFormStars(); 
     }
 
-    function renderFormStars() {
-      const container = document.getElementById('form-ratings-container');
-      if (container) {
-        container.innerHTML = drawStarsHtml(state.selectedRatingForm, 5, true);
-        lucide.createIcons();
-      }
+    function renderFormStars() { 
+      const c = document.getElementById('form-ratings-container'); 
+      if (c) { 
+        c.innerHTML = drawStarsHtml(state.selectedRatingForm, 5, true); 
+        lucide.createIcons(); 
+      } 
     }
 
     function renderBookCoverElementHtml(book) {
       if (book.coverUrl && book.coverUrl.trim() !== '' && !book.coverUrl.includes('placeholder') && book.coverUrl !== 'N/A') {
         return `<img src="${book.coverUrl}" alt="${book.title}" referrerPolicy="no-referrer" class="w-full h-48 object-cover rounded shadow group-hover:scale-102 transition duration-500 ease" />`;
       }
-      const title = book.title || "Library Asset";
-      const author = book.author || "Unknown";
+      const title = book.title || "Library Asset"; 
+      const author = book.author || "Unknown"; 
       let hash = 0;
       for (let i = 0; i < title.length; i++) hash = title.charCodeAt(i) + ((hash << 5) - hash);
       const hue = Math.abs(hash % 360);
-      return `
-        <div class="w-full h-48 rounded shadow flex flex-col justify-between p-3 select-none relative overflow-hidden group-hover:scale-102 transition duration-500 ease" style="background: linear-gradient(135deg, hsl(${hue}, 45%, 80%) 0%, hsl(${(hue + 45) % 360}, 35%, 60%) 100%)">
-          <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 20% 40%, black 1px, transparent 1px); background-size: 8px 8px;"></div>
-          <div class="absolute left-1.5 top-0 bottom-0 w-[3px] bg-black/10 z-10 shadow-sm"></div>
-          <div class="text-[9px] uppercase tracking-wider text-black/60 font-semibold text-right select-all font-mono">${book.isbn || 'TEXT ONLY'}</div>
-          <div class="flex-grow flex flex-col justify-center text-center mt-2 z-15">
-            <h4 class="font-display font-bold text-xs text-stone-900 leading-snug px-2 line-clamp-3">${title}</h4>
-            <p class="text-[10px] text-stone-950/80 italic mt-1 font-sans line-clamp-1">${author}</p>
-          </div>
-          <div class="text-[8px] text-zinc-700/60 font-mono text-center select-none uppercase tracking-wide">Christina's Register</div>
-        </div>
-      `;
+      return `<div class="w-full h-48 rounded shadow flex flex-col justify-between p-3 select-none relative overflow-hidden group-hover:scale-102 transition duration-500 ease" style="background: linear-gradient(135deg, hsl(${hue}, 45%, 80%) 0%, hsl(${(hue + 45) % 360}, 35%, 60%) 100%)"><div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 20% 40%, black 1px, transparent 1px); background-size: 8px 8px;"></div><div class="absolute left-1.5 top-0 bottom-0 w-[3px] bg-black/10 z-10 shadow-sm"></div><div class="text-[9px] uppercase tracking-wider text-black/60 font-semibold text-right font-mono">${book.isbn || 'TEXT ONLY'}</div><div class="flex-grow flex flex-col justify-center text-center mt-2 z-15"><h4 class="font-display font-bold text-xs text-stone-900 leading-snug px-2 line-clamp-3">${title}</h4><p class="text-[10px] text-stone-950/80 italic mt-1 font-sans line-clamp-1">${author}</p></div><div class="text-[8px] text-zinc-700/60 font-mono text-center uppercase tracking-wide">Christina's Register</div></div>`;
     }
 
     function renderMetrics() {
-      const activeBooks = state.books.filter(b => b.status !== 'Deleted');
+      const activeBooks = state.books.filter(b => b.status !== 'Deleted'); 
       document.getElementById('stat-books-count').textContent = activeBooks.length;
-      let accumPages = 0;
+      let accumPages = 0; 
       let cumulativeRead = 0;
       activeBooks.forEach(b => {
-        const total = parseInt(b.totalPages) || 0;
-        const current = parseInt(b.currentPage) || 0;
+        const total = parseInt(b.totalPages) || 0; 
+        const current = parseInt(b.currentPage) || 0; 
         accumPages += total;
-        if (b.status === 'Completed' || b.readStatus === 'Read') cumulativeRead += total;
+        if (b.status === 'Completed' || b.readStatus === 'Read') cumulativeRead += total; 
         else if (current > 0) cumulativeRead += Math.min(current, total);
       });
-      document.getElementById('stat-pages-sum').textContent = accumPages.toLocaleString();
+      document.getElementById('stat-pages-sum').textContent = accumPages.toLocaleString(); 
       document.getElementById('stat-reading').textContent = cumulativeRead.toLocaleString();
     }
 
     function setFilterStatus(s) {
-      state.activeFilterStatus = s;
+      state.activeFilterStatus = s; 
       const pills = ['all', 'reading', 'unread', 'lent'];
-      pills.forEach(p => {
-        const btn = document.getElementById(`btn-flt-${p}`);
-        if (btn) btn.className = p === s ? "px-3 py-1 text-xs font-medium rounded bg-ac text-b" : "px-3 py-1 text-xs font-medium rounded hover:bg-bd/20 text-txs";
+      pills.forEach(p => { 
+        const btn = document.getElementById(`btn-flt-${p}`); 
+        if (btn) btn.className = p === s ? "px-3 py-1 text-xs font-medium rounded bg-ac text-b" : "px-3 py-1 text-xs font-medium rounded hover:bg-bd/20 text-txs"; 
       });
       runFilters();
     }
 
     function setViewMode(v) {
-      state.viewMode = v;
-      const cv = document.getElementById('catalog-canvas');
-      const gridBtn = document.getElementById('btn-view-grid');
+      state.viewMode = v; 
+      const cv = document.getElementById('catalog-canvas'); 
+      const gridBtn = document.getElementById('btn-view-grid'); 
       const listBtn = document.getElementById('btn-view-list');
-      if (v === 'grid') {
-        if (cv) cv.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6";
-        if (gridBtn) gridBtn.className = "p-1 px-2 rounded bg-ac/20 text-tx";
-        if (listBtn) listBtn.className = "p-1 px-2 rounded hover:bg-bd/25 text-txs";
-      } else {
-        if (cv) cv.className = "flex flex-col gap-3";
-        if (gridBtn) gridBtn.className = "p-1 px-2 rounded hover:bg-bd/25 text-txs";
-        if (listBtn) listBtn.className = "p-1 px-2 rounded bg-ac/20 text-tx";
+      if (v === 'grid') { 
+        if (cv) cv.className = "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"; 
+        if (gridBtn) gridBtn.className = "p-1 px-2 rounded bg-ac/20 text-tx"; 
+        if (listBtn) listBtn.className = "p-1 px-2 rounded hover:bg-bd/25 text-txs"; 
+      } else { 
+        if (cv) cv.className = "flex flex-col gap-3"; 
+        if (gridBtn) gridBtn.className = "p-1 px-2 rounded hover:bg-bd/25 text-txs"; 
+        if (listBtn) listBtn.className = "p-1 px-2 rounded bg-ac/20 text-tx"; 
       }
       runFilters();
     }
 
-    function debounceFilter() {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => { runFilters(); }, 300);
+    function debounceFilter() { 
+      clearTimeout(searchTimeout); 
+      searchTimeout = setTimeout(() => { runFilters(); }, 300); 
     }
 
     function runFilters() {
-      const searchInput = document.getElementById('filter-search');
-      const q = searchInput ? searchInput.value.toLowerCase().trim() : "";
-      const statusFlt = state.activeFilterStatus;
-      const sortSelect = document.getElementById('filter-sort');
+      const searchInput = document.getElementById('filter-search'); 
+      const q = searchInput ? searchInput.value.toLowerCase().trim() : ""; 
+      const statusFlt = state.activeFilterStatus; 
+      const sortSelect = document.getElementById('filter-sort'); 
       const sortFlt = sortSelect ? sortSelect.value : "date-desc";
-
+      
       let source = state.books.filter(b => b.status !== 'Deleted');
-      if (statusFlt === 'reading') source = source.filter(b => b.currentPage > 0 && b.status !== 'Completed');
-      else if (statusFlt === 'unread') source = source.filter(b => b.currentPage === 0);
+      if (statusFlt === 'reading') source = source.filter(b => b.currentPage > 0 && b.status !== 'Completed'); 
+      else if (statusFlt === 'unread') source = source.filter(b => b.currentPage === 0); 
       else if (statusFlt === 'lent') source = source.filter(b => b.status === 'Lent' || b.lendedTo);
-
-      if (q !== '') {
-        source = source.filter(b => 
-          (b.title || '').toLowerCase().includes(q) || (b.author || '').toLowerCase().includes(q) || (b.isbn || '').includes(q)
-        );
+      
+      if (q !== '') { 
+        source = source.filter(b => (b.title || '').toLowerCase().includes(q) || (b.author || '').toLowerCase().includes(q) || (b.isbn || '').includes(q)); 
       }
-
-      if (sortFlt === 'title-asc') source.sort((x, y) => (x.title || '').localeCompare(y.title || ''));
-      else if (sortFlt === 'title-desc') source.sort((x, y) => (y.title || '').localeCompare(x.title || ''));
-      else if (sortFlt === 'date-desc') source.sort((x, y) => (y.savedAt || 0) - (x.savedAt || 0));
+      
+      if (sortFlt === 'title-asc') source.sort((x, y) => (x.title || '').localeCompare(y.title || '')); 
+      else if (sortFlt === 'title-desc') source.sort((x, y) => (y.title || '').localeCompare(x.title || '')); 
+      else if (sortFlt === 'date-desc') source.sort((x, y) => (y.savedAt || 0) - (x.savedAt || 0)); 
       else if (sortFlt === 'pages-desc') source.sort((x, y) => (y.totalPages || 0) - (x.totalPages || 0));
-
+      
       renderCatalog(source);
     }
 
     function renderCatalog(booksList) {
-      const canvas = document.getElementById('catalog-canvas');
+      const canvas = document.getElementById('catalog-canvas'); 
       if (!canvas) return;
-      if (booksList.length === 0) {
-        canvas.innerHTML = `
-          <div class="col-span-full py-16 text-center space-y-3">
-            <i data-lucide="book-dashed" class="w-12 h-12 text-txs mx-auto opacity-60"></i>
-            <h4 class="font-display font-semibold text-sm">No registered elements matching context parameters.</h4>
-          </div>`;
-        lucide.createIcons();
-        return;
+      if (booksList.length === 0) { 
+        canvas.innerHTML = `<div class="col-span-full py-16 text-center space-y-3"><i data-lucide="book-dashed" class="w-12 h-12 text-txs mx-auto opacity-60"></i><h4 class="font-display font-semibold text-sm">No registered elements matching parameters.</h4></div>`; 
+        lucide.createIcons(); 
+        return; 
       }
       let markup = '';
       if (state.viewMode === 'grid') {
         booksList.forEach(book => {
-          const progressPercent = Math.min(100, Math.round(((book.currentPage || 0) / (book.totalPages || 1)) * 100));
+          const progressPercent = Math.min(100, Math.round(((book.currentPage || 0) / (book.totalPages || 1)) * 100)); 
           const displayStatus = book.currentPage === 0 ? "Unread" : (progressPercent === 100 ? "Completed" : "Reading");
-          let statusBadgeClass = 'bg-zinc-100 text-zinc-800 border-zinc-300';
-          if (displayStatus === 'Reading') statusBadgeClass = 'bg-amber-100 text-amber-800 border-amber-300';
-          if (displayStatus === 'Completed') statusBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+          let statusBadgeClass = 'bg-zinc-100 text-zinc-800 border-zinc-300'; 
+          if (displayStatus === 'Reading') statusBadgeClass = 'bg-amber-100 text-amber-800 border-amber-300'; 
+          if (displayStatus === 'Completed') statusBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300'; 
           if (book.lendedTo) statusBadgeClass = 'bg-rose-100 text-rose-800 border-rose-300';
-
-          markup += `
-            <div onclick="launchBookDetail('${book.id}')" class="glass card-lift rounded-xl p-3 cursor-pointer select-none space-y-3 group border flex flex-col justify-between">
-              <div class="space-y-2">
-                <div class="w-full h-48 rounded shadow overflow-hidden relative">
-                  ${renderBookCoverElementHtml(book)}
-                  <span class="absolute top-2 right-2 text-[9px] font-bold font-mono px-2 py-0.5 rounded shadow-sm border ${statusBadgeClass}">
-                    ${book.lendedTo ? 'LENT' : displayStatus.toUpperCase()}
-                  </span>
-                </div>
-                <div class="space-y-0.5">
-                  <h4 class="font-display font-semibold text-sm tracking-tight text-tx line-clamp-1">${book.title}</h4>
-                  <p class="text-xs text-txs italic line-clamp-1">${book.author}</p>
-                </div>
-              </div>
-              <div class="space-y-2 pt-2 border-t border-bd/40">
-                <div class="space-y-1">
-                  <div class="flex justify-between text-[10px] text-txs font-mono">
-                    <span>Page ${book.currentPage || 0} / ${book.totalPages}</span>
-                    <span>${progressPercent}%</span>
-                  </div>
-                  <div class="w-full h-1 bg-bs rounded-full overflow-hidden relative">
-                    <div class="bg-ac h-full rounded" style="width: ${progressPercent}%"></div>
-                  </div>
-                </div>
-                <div class="flex gap-0.5 text-yellow-500 justify-between items-center">
-                  <div class="flex">${drawStarsHtml(book.rating)}</div>
-                </div>
-              </div>
-            </div>`;
+          
+          markup += `<div onclick="launchBookDetail('${book.id}')" class="glass card-lift rounded-xl p-3 cursor-pointer select-none space-y-3 group border flex flex-col justify-between"><div class="space-y-2"><div class="w-full h-48 rounded shadow overflow-hidden relative">${renderBookCoverElementHtml(book)}<span class="absolute top-2 right-2 text-[9px] font-bold font-mono px-2 py-0.5 rounded shadow-sm border ${statusBadgeClass}">${book.lendedTo ? 'LENT' : displayStatus.toUpperCase()}</span></div><div class="space-y-0.5"><h4 class="font-display font-semibold text-sm tracking-tight text-tx line-clamp-1">${book.title}</h4><p class="text-xs text-txs italic line-clamp-1">${book.author}</p></div></div><div class="space-y-2 pt-2 border-t border-bd/40"><div class="space-y-1"><div class="flex justify-between text-[10px] text-txs font-mono"><span>Page ${book.currentPage || 0} / ${book.totalPages}</span><span>${progressPercent}%</span></div><div class="w-full h-1 bg-bs rounded-full overflow-hidden relative"><div class="bg-ac h-full rounded" style="width: ${progressPercent}%"></div></div></div><div class="flex gap-0.5 text-yellow-500 justify-between items-center"><div class="flex">${drawStarsHtml(book.rating)}</div></div></div></div>`;
         });
       } else {
         booksList.forEach(book => {
           const progressPercent = Math.min(100, Math.round(((book.currentPage || 0) / (book.totalPages || 1)) * 100));
-          markup += `
-            <div onclick="launchBookDetail('${book.id}')" class="glass card-lift rounded-xl p-4 cursor-pointer select-none border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              <div class="flex items-center gap-4 flex-grow w-full md:w-1/2">
-                <div class="w-12 h-16 rounded shadow overflow-hidden flex-shrink-0">
-                  ${book.coverUrl ? `<img src="${book.coverUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-acm flex items-center justify-center"><i data-lucide="book" class="w-5 h-5 text-txs"></i></div>`}
-                </div>
-                <div>
-                  <h4 class="font-display font-semibold text-sm text-tx leading-snug">${book.title}</h4>
-                  <p class="text-xs text-txs italic">${book.author}</p>
-                </div>
-              </div>
-              <div class="w-full md:w-1/4 space-y-1">
-                <div class="flex justify-between text-[10px] text-txs font-mono">
-                  <span>Page ${book.currentPage || 0} / ${book.totalPages}</span>
-                </div>
-                <div class="w-full h-1.5 bg-bs rounded-full overflow-hidden">
-                  <div class="bg-ac h-full" style="width: ${progressPercent}%"></div>
-                </div>
-              </div>
-            </div>`;
+          markup += `<div onclick="launchBookDetail('${book.id}')" class="glass card-lift rounded-xl p-4 cursor-pointer select-none border flex flex-col md:flex-row items-start md:items-center justify-between gap-4"><div class="flex items-center gap-4 flex-grow w-full md:w-1/2"><div class="w-12 h-16 rounded shadow overflow-hidden flex-shrink-0">${book.coverUrl ? `<img src="${book.coverUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-acm flex items-center justify-center"><i data-lucide="book" class="w-5 h-5 text-txs"></i></div>`}</div><div><h4 class="font-display font-semibold text-sm text-tx leading-snug">${book.title}</h4><p class="text-xs text-txs italic">${book.author}</p></div></div><div class="w-full md:w-1/4 space-y-1"><div class="flex justify-between text-[10px] text-txs font-mono"><span>Page ${book.currentPage || 0} / ${book.totalPages}</span></div><div class="w-full h-1.5 bg-bs rounded-full overflow-hidden"><div class="bg-ac h-full" style="width: ${progressPercent}%"></div></div></div></div>`;
         });
       }
-      canvas.innerHTML = markup;
+      canvas.innerHTML = markup; 
       lucide.createIcons();
     }
 
     function launchBookDetail(bookId) {
-      const book = state.books.find(b => b.id === bookId);
-      if (!book) return;
+      const book = state.books.find(b => b.id === bookId); 
+      if (!book) return; 
       state.activeModalBookId = bookId;
-      document.getElementById('modal-title').textContent = book.title;
-      document.getElementById('modal-author').textContent = book.author;
-      document.getElementById('modal-isbn').textContent = book.isbn || 'Text Row Record';
-      document.getElementById('modal-id').textContent = book.id;
+      document.getElementById('modal-title').textContent = book.title; 
+      document.getElementById('modal-author').textContent = book.author; 
+      document.getElementById('modal-isbn').textContent = book.isbn || 'Text Row Record'; 
+      document.getElementById('modal-id').textContent = book.id; 
       document.getElementById('modal-notes').textContent = book.notes || 'No librarian entries logged.';
       
       const pctValue = Math.min(100, Math.round(((book.currentPage || 0) / (book.totalPages || 1)) * 100));
-      document.getElementById('modal-progress-text').textContent = `On page ${book.currentPage || 0} of ${book.totalPages} (${pctValue}%)`;
-      document.getElementById('modal-progress-bar').style.width = `${pctValue}%`;
+      document.getElementById('modal-progress-text').textContent = `On page ${book.currentPage || 0} of ${book.totalPages} (${pctValue}%)`; 
+      document.getElementById('modal-progress-bar').style.width = `${pctValue}%`; 
       document.getElementById('modal-input-curr-page').value = book.currentPage || 0;
-
-      document.getElementById('modal-cover-container').innerHTML = renderBookCoverElementHtml(book);
+      document.getElementById('modal-cover-container').innerHTML = renderBookCoverElementHtml(book); 
       document.getElementById('modal-rating-stars-container').innerHTML = drawStarsHtml(book.rating);
-
-      const modal = document.getElementById('detail-modal');
-      modal.classList.remove('hidden');
+      
+      const modal = document.getElementById('detail-modal'); 
+      modal.classList.remove('hidden'); 
       modal.classList.add('flex');
     }
 
-    function closeDetailModal() {
-      const modal = document.getElementById('detail-modal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-      }
-      state.activeModalBookId = null;
+    function closeDetailModal() { 
+      const m = document.getElementById('detail-modal'); 
+      if (m) { m.classList.add('hidden'); m.classList.remove('flex'); } 
+      state.activeModalBookId = null; 
     }
 
     function updateBookProgressFromModal() {
-      const newCurr = parseInt(document.getElementById('modal-input-curr-page').value) || 0;
-      const index = state.books.findIndex(b => b.id === state.activeModalBookId);
-      if (index === -1) return;
-      const book = state.books[index];
+      const newCurr = parseInt(document.getElementById('modal-input-curr-page').value) || 0; 
+      const index = state.books.findIndex(b => b.id === state.activeModalBookId); 
+      if (index === -1) return; 
+      const book = state.books[index]; 
       if (newCurr > book.totalPages) return;
-
-      book.currentPage = newCurr;
-      book.status = newCurr === 0 ? "Unread" : (newCurr === book.totalPages ? "Completed" : "Currently Reading");
-      saveCacheData();
-      closeDetailModal();
+      
+      book.currentPage = newCurr; 
+      book.status = newCurr === 0 ? "Unread" : (newCurr === book.totalPages ? "Completed" : "Currently Reading"); 
+      saveCacheData(); 
+      closeDetailModal(); 
       renderAll();
     }
 
-    function triggerBookDelete() {
-      const index = state.books.findIndex(b => b.id === state.activeModalBookId);
-      if (index === -1) return;
-      if (confirm(`Confirm deletion flag assignment tracking updates?`)) {
-        state.books[index].status = "Deleted";
-        saveCacheData();
-        closeDetailModal();
-        renderAll();
-      }
+    function triggerBookDelete() { 
+      const index = state.books.findIndex(b => b.id === state.activeModalBookId); 
+      if (index === -1) return; 
+      if (confirm(`Confirm deletion flag assignment tracking updates?`)) { 
+        state.books[index].status = "Deleted"; 
+        saveCacheData(); 
+        closeDetailModal(); 
+        renderAll(); 
+      } 
     }
 
     async function fetchBookMetadataByISBN(isbnCode) {
@@ -1008,13 +971,13 @@
             const parsed = JSON.parse(text);
             if (parsed.items && parsed.items.length > 0) {
               const info = parsed.items[0].volumeInfo;
-              const details = {
-                title: info.title || "Unclassified Volume",
-                author: info.authors ? info.authors.join(", ") : "Unknown Author",
-                isbn: cleanIsbn,
-                totalPages: info.pageCount || 300,
-                coverUrl: info.imageLinks ? (info.imageLinks.thumbnail || '') : '',
-                notes: info.description || ''
+              const details = { 
+                title: info.title || "Unclassified Volume", 
+                author: info.authors ? info.authors.join(", ") : "Unknown Author", 
+                isbn: cleanIsbn, 
+                totalPages: info.pageCount || 300, 
+                coverUrl: info.imageLinks ? (info.imageLinks.thumbnail || '') : '', 
+                notes: info.description || '' 
               };
               if (details.coverUrl.startsWith("http://")) details.coverUrl = details.coverUrl.replace("http://", "https://");
               return details;
@@ -1022,20 +985,19 @@
           }
         }
       } catch (err) { console.error(err); }
-
       try {
         const olResp = await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${cleanIsbn}&jscmd=data&format=json`);
         if (olResp.ok) {
           const olJson = await olResp.json();
           if (olJson[`ISBN:${cleanIsbn}`]) {
             const olData = olJson[`ISBN:${cleanIsbn}`];
-            return {
-              title: olData.title || "Unknown Work",
-              author: olData.authors ? olData.authors.map(a => a.name).join(", ") : "Unknown Author",
-              isbn: cleanIsbn,
-              totalPages: olData.number_of_pages || 250,
-              coverUrl: olData.cover ? (olData.cover.large || '') : '',
-              notes: 'OL Fallback record configuration data values.'
+            return { 
+              title: olData.title || "Unknown Work", 
+              author: olData.authors ? olData.authors.map(a => a.name).join(", ") : "Unknown Author", 
+              isbn: cleanIsbn, 
+              totalPages: olData.number_of_pages || 250, 
+              coverUrl: olData.cover ? (olData.cover.large || '') : '', 
+              notes: 'OL Fallback record configuration data values.' 
             };
           }
         }
@@ -1044,364 +1006,279 @@
     }
 
     async function triggerQuickIsbnLookup() {
-      const field = document.getElementById('quick-isbn-field');
+      const field = document.getElementById('quick-isbn-field'); 
       if (!field || !field.value) return;
       const res = await fetchBookMetadataByISBN(field.value);
       if (res) {
-        document.getElementById('add-title').value = res.title;
-        document.getElementById('add-author').value = res.author;
-        document.getElementById('add-isbn').value = res.isbn;
-        document.getElementById('add-pages').value = res.totalPages;
-        document.getElementById('add-cover').value = res.coverUrl;
-        document.getElementById('add-notes').value = res.notes;
+        document.getElementById('add-title').value = res.title; 
+        document.getElementById('add-author').value = res.author; 
+        document.getElementById('add-isbn').value = res.isbn; 
+        document.getElementById('add-pages').value = res.totalPages; 
+        document.getElementById('add-cover').value = res.coverUrl; 
+        document.getElementById('add-notes').value = res.notes; 
         field.value = '';
       }
     }
 
     function saveManualBook(ev) {
       ev.preventDefault();
-      const title = document.getElementById('add-title').value.trim();
-      const author = document.getElementById('add-author').value.trim();
-      const isbn = document.getElementById('add-isbn').value.trim();
-      const coverUrl = document.getElementById('add-cover').value.trim();
-      const totalPages = parseInt(document.getElementById('add-pages').value) || 100;
-      const currentPage = parseInt(document.getElementById('add-current-page').value) || 0;
-      const rating = parseInt(document.getElementById('add-rating').value) || 0;
+      const title = document.getElementById('add-title').value.trim(); 
+      const author = document.getElementById('add-author').value.trim(); 
+      const isbn = document.getElementById('add-isbn').value.trim(); 
+      const coverUrl = document.getElementById('add-cover').value.trim(); 
+      const totalPages = parseInt(document.getElementById('add-pages').value) || 100; 
+      const currentPage = parseInt(document.getElementById('add-current-page').value) || 0; 
+      const rating = parseInt(document.getElementById('add-rating').value) || 0; 
       const notes = document.getElementById('add-notes').value.trim();
-
+      
       if (currentPage > totalPages) return;
       upsertDatabaseBook({ title, author, isbn, coverUrl, totalPages, currentPage, rating, notes });
-      ev.target.reset();
-      setFormRating(0);
+      ev.target.reset(); 
+      setFormRating(0); 
       switchTab('home');
     }
 
     function upsertDatabaseBook(meta) {
-      const cleanIsbn = meta.isbn ? meta.isbn.trim().replace(/[- ]/g, '') : '';
+      const cleanIsbn = meta.isbn ? meta.isbn.trim().replace(/[- ]/g, '') : ''; 
       let index = -1;
-      if (cleanIsbn !== '') {
-        index = state.books.findIndex(b => b.isbn && b.isbn.trim().replace(/[- ]/g, '') === cleanIsbn);
+      if (cleanIsbn !== '') { 
+        index = state.books.findIndex(b => b.isbn && b.isbn.trim().replace(/[- ]/g, '') === cleanIsbn); 
       }
       if (index > -1) {
         const existing = state.books[index];
-        state.books[index] = {
-          ...existing,
-          title: meta.title || existing.title,
-          author: meta.author || existing.author,
-          currentPage: meta.currentPage !== undefined ? meta.currentPage : existing.currentPage,
-          totalPages: meta.totalPages || existing.totalPages,
-          rating: meta.rating !== undefined ? meta.rating : existing.rating,
-          notes: meta.notes || existing.notes,
-          status: meta.status || (meta.currentPage === 0 ? "Unread" : (meta.currentPage === meta.totalPages ? "Completed" : "Currently Reading")),
-          coverUrl: (existing.coverUrl && !existing.coverUrl.includes('placeholder') && existing.coverUrl !== 'N/A') ? existing.coverUrl : meta.coverUrl
-        };
+        state.books[index] = { ...existing, title: meta.title || existing.title, author: meta.author || existing.author, currentPage: meta.currentPage !== undefined ? meta.currentPage : existing.currentPage, totalPages: meta.totalPages || existing.totalPages, rating: meta.rating !== undefined ? meta.rating : existing.rating, notes: meta.notes || existing.notes, status: meta.status || (meta.currentPage === 0 ? "Unread" : (meta.currentPage === meta.totalPages ? "Completed" : "Currently Reading")), coverUrl: (existing.coverUrl && !existing.coverUrl.includes('placeholder') && existing.coverUrl !== 'N/A') ? existing.coverUrl : meta.coverUrl };
       } else {
-        const curP = meta.currentPage || 0;
+        const curP = meta.currentPage || 0; 
         const totP = meta.totalPages || 300;
-        const fresh = {
-          id: 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-          title: meta.title || 'Untitled Book',
-          author: meta.author || 'Unknown Author',
-          isbn: cleanIsbn,
-          currentPage: curP,
-          totalPages: totP,
-          rating: meta.rating || 0,
-          status: curP === 0 ? "Unread" : (curP === totP ? "Completed" : "Currently Reading"),
-          notes: meta.notes || '',
-          lendedTo: '',
-          savedAt: Date.now(),
-          coverUrl: meta.coverUrl || ''
-        };
+        const fresh = { id: 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), title: meta.title || 'Untitled Book', author: meta.author || 'Unknown Author', isbn: cleanIsbn, currentPage: curP, totalPages: totP, rating: meta.rating || 0, status: curP === 0 ? "Unread" : (curP === totP ? "Completed" : "Currently Reading"), notes: meta.notes || '', lendedTo: '', savedAt: Date.now(), coverUrl: meta.coverUrl || '' };
         state.books.unshift(fresh);
       }
-      saveCacheData();
+      saveCacheData(); 
       renderAll();
     }
 
     async function recoverMissingCovers() {
-      const targets = state.books.filter(b => b.status !== 'Deleted' && (!b.coverUrl || b.coverUrl.trim() === '' || b.coverUrl.includes('placeholder') || b.coverUrl == 'N/A'));
+      const targets = state.books.filter(b => b.status !== 'Deleted' && (!b.coverUrl || b.coverUrl.trim() === '' || b.coverUrl.includes('placeholder') || b.coverUrl == 'N/A')); 
       if (targets.length === 0) return;
-      const btn = document.getElementById('btn-recover-covers');
+      const btn = document.getElementById('btn-recover-covers'); 
       if (btn) btn.textContent = "Fetching...";
-      for (let book of targets) {
-        if (!book.isbn || book.isbn.startsWith('MAN-')) continue;
-        const data = await fetchBookMetadataByISBN(book.isbn);
-        if (data && data.coverUrl) {
-          book.coverUrl = data.coverUrl;
-          saveCacheData();
-          runFilters();
-        }
+      
+      for (let book of targets) { 
+        if (!book.isbn || book.isbn.startsWith('MAN-')) continue; 
+        const data = await fetchBookMetadataByISBN(book.isbn); 
+        if (data && data.coverUrl) { book.coverUrl = data.coverUrl; saveCacheData(); runFilters(); } 
       }
-      if (btn) {
-        btn.innerHTML = `<i data-lucide="image" class="w-3.5 h-3.5"></i> Covers`;
-        lucide.createIcons();
-      }
+      if (btn) { btn.innerHTML = `<i data-lucide="image" class="w-3.5 h-3.5"></i> Covers`; lucide.createIcons(); }
       renderMetrics();
     }
 
     function saveWishlistItem() {
-      const title = document.getElementById('wish-title').value.trim();
-      const author = document.getElementById('wish-author').value.trim() || 'Unknown Author';
-      const isbn = document.getElementById('wish-isbn').value.trim();
-      const category = document.getElementById('wishlist-category-selector').value;
+      const title = document.getElementById('wish-title').value.trim(); 
+      const author = document.getElementById('wish-author').value.trim() || 'Unknown Author'; 
+      const isbn = document.getElementById('wish-isbn').value.trim(); 
+      const category = document.getElementById('wishlist-category-selector').value; 
       if (!title) return;
-
+      
       state.wishlist.unshift({ id: 'w_' + Date.now(), title, author, isbn, category, notes: '' });
-      document.getElementById('wish-title').value = '';
-      document.getElementById('wish-author').value = '';
+      document.getElementById('wish-title').value = ''; 
+      document.getElementById('wish-author').value = ''; 
       document.getElementById('wish-isbn').value = '';
-      saveCacheData();
+      saveCacheData(); 
       renderWishlist();
     }
 
     function renderWishlist() {
-      const catSelect = document.getElementById('wishlist-category-selector');
-      const cat = catSelect ? catSelect.value : "To Buy Immediately";
-      const box = document.getElementById('wishlist-table-container');
-      const badge = document.getElementById('wishlist-count-badge');
-      const header = document.getElementById('active-list-header');
+      const cat = document.getElementById('wishlist-category-selector')?.value || "To Buy Immediately"; 
+      const box = document.getElementById('wishlist-table-container'); 
+      const badge = document.getElementById('wishlist-count-badge'); 
+      const header = document.getElementById('active-list-header'); 
       if (header) header.textContent = cat;
-
-      const list = state.wishlist.filter(w => w.category === cat);
-      if (badge) badge.textContent = `${list.length} items`;
+      
+      const list = state.wishlist.filter(w => w.category === cat); 
+      if (badge) badge.textContent = `${list.length} items`; 
       if (!box) return;
-
-      if (list.length === 0) {
-        box.innerHTML = `<p class="text-xs text-txs italic p-6 border border-dashed rounded-xl text-center">Folder contents clean.</p>`;
-        return;
-      }
+      if (list.length === 0) { box.innerHTML = `<p class="text-xs text-txs italic p-6 border border-dashed rounded-xl text-center">Folder contents clean.</p>`; return; }
+      
       let html = '';
       list.forEach(item => {
-        html += `
-          <div class="glass border rounded-xl p-4 flex justify-between items-center card-lift">
-            <div>
-              <h4 class="font-display font-bold text-sm">${item.title}</h4>
-              <p class="text-xs text-txs">${item.author}</p>
-            </div>
-            <div class="flex gap-2">
-              <button onclick="transferWishToLibrary('${item.id}')" class="bg-ac text-b text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-ach shadow transition">Own</button>
-              <button onclick="discardWishItem('${item.id}')" class="text-red-500 border border-red-500/30 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-            </div>
-          </div>`;
+        html += `<div class="glass border rounded-xl p-4 flex justify-between items-center card-lift"><div><h4 class="font-display font-bold text-sm">${item.title}</h4><p class="text-xs text-txs">${item.author}</p></div><div class="flex gap-2"><button onclick="transferWishToLibrary('${item.id}')" class="bg-ac text-b text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-ach shadow transition">Own</button><button onclick="discardWishItem('${item.id}')" class="text-red-500 border border-red-500/30 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
       });
-      box.innerHTML = html;
+      box.innerHTML = html; 
       lucide.createIcons();
     }
 
     function transferWishToLibrary(id) {
-      const idx = state.wishlist.findIndex(w => w.id === id);
-      if (idx === -1) return;
-      const w = state.wishlist[idx];
-      let pages = prompt(`Enter total volume page length:`, "320");
+      const idx = state.wishlist.findIndex(w => w.id === id); 
+      if (idx === -1) return; 
+      const w = state.wishlist[idx]; 
+      let pages = prompt(`Enter page length:`, "320"); 
       if (pages === null) return;
+      
       upsertDatabaseBook({ title: w.title, author: w.author, isbn: w.isbn, totalPages: parseInt(pages) || 320, currentPage: 0 });
-      state.wishlist.splice(idx, 1);
-      saveCacheData();
+      state.wishlist.splice(idx, 1); 
+      saveCacheData(); 
       renderWishlist();
     }
-
-    function discardWishItem(id) {
-      state.wishlist = state.wishlist.filter(w => w.id !== id);
-      saveCacheData();
-      renderWishlist();
+    
+    function discardWishItem(id) { 
+      state.wishlist = state.wishlist.filter(w => w.id !== id); 
+      saveCacheData(); 
+      renderWishlist(); 
     }
 
     function renderLendingModule() {
-      const tbody = document.getElementById('lending-tbody');
-      const activeLents = state.books.filter(b => b.status === 'Lent' || b.lendedTo);
-      const loansBadge = document.getElementById('active-loans-badge');
-      if (loansBadge) loansBadge.textContent = `${activeLents.length} Books Out`;
+      const tbody = document.getElementById('lending-tbody'); 
+      const activeLents = state.books.filter(b => b.status === 'Lent' || b.lendedTo); 
+      const loansBadge = document.getElementById('active-loans-badge'); 
+      if (loansBadge) loansBadge.textContent = `${activeLents.length} Books Out`; 
       if (!tbody) return;
-
-      if (activeLents.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-txs italic font-mono">Registry verified shelf inventory elements.</td></tr>`;
-        return;
+      
+      if (activeLents.length === 0) { 
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-txs italic font-mono">Registry verified shelf inventory elements.</td></tr>`; 
+        return; 
       }
+      
       let html = '';
       activeLents.forEach(b => {
-        html += `
-          <tr class="text-xs border-b border-bd/30">
-            <td class="p-4 font-semibold font-display">${b.title}</td>
-            <td class="p-4 text-ac font-mono font-bold">${b.lendedTo || 'Guest'}</td>
-            <td class="p-4 font-mono text-txs">${b.dateLent || '2026-06-17'}</td>
-            <td class="p-4">Active Loan</td>
-            <td class="p-4 text-right">
-              <button onclick="terminateBookLoan('${b.id}')" class="bg-ac text-b font-semibold px-2 py-1 rounded shadow text-[10px]">Return</button>
-            </td>
-          </tr>`;
+        html += `<tr class="text-xs border-b border-bd/30"><td class="p-4 font-semibold font-display">${b.title}</td><td class="p-4 text-ac font-mono font-bold">${b.lendedTo || 'Guest'}</td><td class="p-4 font-mono text-txs">${b.dateLent || '2026-06-18'}</td><td class="p-4">Active Loan</td><td class="p-4 text-right"><button onclick="terminateBookLoan('${b.id}')" class="bg-ac text-b font-semibold px-2 py-1 rounded shadow text-[10px]">Return</button></td></tr>`;
       });
       tbody.innerHTML = html;
+
+      // Historically closed lending records parsing template
+      const archiveBox = document.getElementById('lending-archive-list');
+      if (archiveBox) {
+        if (!state.lendingLog || state.lendingLog.length === 0) {
+          archiveBox.innerHTML = `<p class="text-txs italic">No historic entries returned.</p>`;
+        } else {
+          archiveBox.innerHTML = state.lendingLog.map(log => `
+            <div class="py-2 flex justify-between items-center text-[11px] font-mono">
+              <span class="text-tx font-sans font-medium">${log.title}</span>
+              <span class="text-txs">Returned from <b class="text-ac">${log.borrower}</b> on ${log.dateLent || ''}</span>
+            </div>
+          `).join('');
+        }
+      }
     }
 
     function requestLendingForm() {
-      const sel = document.getElementById('lend-book-selector');
-      const eligibles = state.books.filter(b => b.status !== 'Deleted' && b.status !== 'Lent' && !b.lendedTo);
+      const sel = document.getElementById('lend-book-selector'); 
+      const eligibles = state.books.filter(b => b.status !== 'Deleted' && b.status !== 'Lent' && !b.lendedTo); 
       if (eligibles.length === 0) return;
       if (sel) sel.innerHTML = eligibles.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
-      const dateInput = document.getElementById('lend-date');
-      if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-      const modal = document.getElementById('lend-form-modal');
-      if (modal) modal.classList.remove('hidden');
+      const dInput = document.getElementById('lend-date'); 
+      if (dInput) dInput.value = new Date().toISOString().split('T')[0];
+      const m = document.getElementById('lend-form-modal'); 
+      if (m) m.classList.remove('hidden');
     }
-
-    function closeLendForm() {
-      const modal = document.getElementById('lend-form-modal');
-      if (modal) modal.classList.add('hidden');
+    
+    function closeLendForm() { 
+      const m = document.getElementById('lend-form-modal'); 
+      if (m) m.classList.add('hidden'); 
     }
-
+    
     function submitBookLoan() {
-      const id = document.getElementById('lend-book-selector').value;
-      const bname = document.getElementById('lend-borrower').value.trim();
-      const date = document.getElementById('lend-date').value;
+      const id = document.getElementById('lend-book-selector').value; 
+      const bname = document.getElementById('lend-borrower').value.trim(); 
+      const date = document.getElementById('lend-date').value; 
       if (!bname) return;
-      const b = state.books.find(x => x.id === id);
-      if (b) {
-        b.status = "Lent";
-        b.lendedTo = bname;
-        b.dateLent = date;
-        saveCacheData();
-        closeLendForm();
-        renderAll();
+      const b = state.books.find(x => x.id === id); 
+      if (b) { 
+        b.status = "Lent"; 
+        b.lendedTo = bname; 
+        b.dateLent = date; 
+        saveCacheData(); 
+        closeLendForm(); 
+        renderAll(); 
       }
     }
-
+    
     function terminateBookLoan(id) {
       const b = state.books.find(x => x.id === id);
-      if (b) {
-        if (!state.lendingLog) state.lendingLog = [];
-        state.lendingLog.unshift({ title: b.title, borrower: b.lendedTo, dateLent: b.dateLent, activeDays: 5 });
-        b.lendedTo = '';
-        b.dateLent = '';
-        b.status = b.currentPage === 0 ? "Unread" : (b.currentPage === b.totalPages ? "Completed" : "Currently Reading");
-        saveCacheData();
-        renderAll();
+      if (b) { 
+        if (!state.lendingLog) state.lendingLog = []; 
+        state.lendingLog.unshift({ title: b.title, borrower: b.lendedTo, dateLent: b.dateLent }); 
+        b.lendedTo = ''; 
+        b.dateLent = ''; 
+        b.status = b.currentPage === 0 ? "Unread" : (b.currentPage === b.totalPages ? "Completed" : "Currently Reading"); 
+        saveCacheData(); 
+        renderAll(); 
       }
     }
 
     async function syncDatabase() {
-      const btn = document.getElementById('btn-sync-trigger');
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Processing sync payload handshakes...";
-      }
+      const btn = document.getElementById('btn-sync-trigger'); 
+      if (btn) { btn.disabled = true; btn.textContent = "Processing sync payload handshakes..."; }
       addLog("Preparing bidirectional sync payload matrix strings...", "info");
       const endpoint = "https://script.google.com/macros/s/AKfycbzS-77IouqmtfH-hXMWGRjrxq73XpdIh9e6zg7HsVYX3Qn3fIuIaP7EyczBDn4HR_jfJg/exec";
-
       try {
-        const mappedPayload = state.books.map(b => ({
-          id: b.id,
-          isbnUid: b.isbn || '',
-          title: b.title || 'Untitled',
-          authors: b.author || 'Unknown',
-          genre: b.genre || 'General',
-          pages: parseInt(b.totalPages) || 0,
-          currentPage: parseInt(b.currentPage) || 0,
-          readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"),
-          lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available",
-          borrower: b.lendedTo || '',
-          dateLent: b.dateLent || '',
-          coverUrl: b.coverUrl || '',
-          comment: b.notes || '',
-          status: b.status || 'Active'
-        }));
-
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" }, 
-          body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: mappedPayload })
-        });
-
-        const responseText = await response.text();
+        const mappedPayload = state.books.map(b => ({ id: b.id, isbnUid: b.isbn || '', title: b.title || 'Untitled', authors: b.author || 'Unknown', genre: b.genre || 'General', pages: parseInt(b.totalPages) || 0, currentPage: parseInt(b.currentPage) || 0, readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", borrower: b.lendedTo || '', dateLent: b.dateLent || '', coverUrl: b.coverUrl || '', comment: b.notes || '', status: b.status || 'Active' }));
+        const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: mappedPayload }) });
+        const responseText = await response.text(); 
         const serverData = JSON.parse(responseText);
-
+        
         if (serverData.status === "success" && serverData.books) {
-          addLog("Bilateral synchronizer successfully balanced database lines.", "success");
+          addLog("Bilateral synchronizer successfully balanced database lines.", "success"); 
           let updatedBooksList = [...state.books];
-
           serverData.books.forEach(cloudBook => {
-            const cloudIsbn = String(cloudBook.isbnuid || cloudBook.isbnUid || '').trim();
+            const cloudIsbn = String(cloudBook.isbnuid || cloudBook.isbnUid || '').trim(); 
             const cloudTitle = String(cloudBook.title || '').trim().toLowerCase();
-            const existingIdx = updatedBooksList.findIndex(b => 
-              (b.isbn && b.isbn.trim() === cloudIsbn) || (b.title.toLowerCase().trim() === cloudTitle)
-            );
+            const existingIdx = updatedBooksList.findIndex(b => (b.isbn && b.isbn.trim() === cloudIsbn) || (b.title.toLowerCase().trim() === cloudTitle));
             const isCloudDeleted = cloudBook.status === "Deleted" || cloudBook.readstatus === "Deleted" || cloudBook.readStatus === "Deleted";
-
+            
             if (existingIdx >= 0) {
               const localBook = updatedBooksList[existingIdx];
-              if (localBook.status === "Deleted" || isCloudDeleted) {
-                updatedBooksList[existingIdx] = { ...localBook, status: "Deleted" };
-              } else {
-                const cloudCover = cloudBook.coverurl || cloudBook.coverUrl || '';
+              if (localBook.status === "Deleted" || isCloudDeleted) { updatedBooksList[existingIdx] = { ...localBook, status: "Deleted" }; }
+              else {
+                const cloudCover = cloudBook.coverurl || cloudBook.coverUrl || ''; 
                 const secureCover = (localBook.coverUrl && !localBook.coverUrl.includes('placeholder') && localBook.coverUrl !== 'N/A') ? localBook.coverUrl : cloudCover;
-                updatedBooksList[existingIdx] = {
-                  ...localBook,
-                  currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0,
-                  totalPages: parseInt(cloudBook.pages) || localBook.totalPages,
-                  lendedTo: cloudBook.lendingstatus === "Lent" ? (cloudBook.borrower || "Guest") : '',
-                  dateLent: cloudBook.datelent || cloudBook.dateLent || '',
-                  notes: cloudBook.comment || localBook.notes,
-                  coverUrl: secureCover,
-                  status: "Active"
-                };
+                updatedBooksList[existingIdx] = { ...localBook, currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0, totalPages: parseInt(cloudBook.pages) || localBook.totalPages, lendedTo: cloudBook.lendingstatus === "Lent" ? (cloudBook.borrower || "Guest") : '', dateLent: cloudBook.datelent || cloudBook.dateLent || '', notes: cloudBook.comment || localBook.notes, coverUrl: secureCover, status: "Active" };
               }
             } else {
-              if (!isCloudDeleted) {
-                updatedBooksList.push({
-                  id: cloudBook.id || 'bk_' + Date.now(),
-                  title: cloudBook.title,
-                  author: cloudBook.authors || 'Unknown Author',
-                  isbn: cloudIsbn,
-                  currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0,
-                  totalPages: parseInt(cloudBook.pages) || 300,
-                  status: parseInt(cloudBook.currentpage) >= parseInt(cloudBook.pages) ? "Completed" : "Unread",
-                  coverUrl: cloudBook.coverurl || cloudBook.coverUrl || '',
-                  notes: cloudBook.comment || '',
-                  savedAt: Date.now()
-                });
+              if (!isCloudDeleted) { 
+                updatedBooksList.push({ id: cloudBook.id || 'bk_' + Date.now(), title: cloudBook.title, author: cloudBook.authors || 'Unknown Author', isbn: cloudIsbn, currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0, totalPages: parseInt(cloudBook.pages) || 300, status: parseInt(cloudBook.currentpage) >= parseInt(cloudBook.pages) ? "Completed" : "Unread", coverUrl: cloudBook.coverurl || cloudBook.coverUrl || '', notes: cloudBook.comment || '', savedAt: Date.now() }); 
               }
             }
           });
-          state.books = updatedBooksList;
+          state.books = updatedBooksList; 
           saveCacheData();
         }
-      } catch (err) { console.error(err); }
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="refresh-cw" class="w-5 h-5"></i> Sync Library Database`;
-        lucide.createIcons();
+      } catch (err) { 
+        console.error(err); 
+        addLog("Sync handshake timeout or endpoint error mismatch.", "error");
       }
+      if (btn) { btn.disabled = false; btn.innerHTML = `<i data-lucide="refresh-cw" class="w-5 h-5"></i> Sync Library Database`; lucide.createIcons(); }
       renderAll();
     }
 
-    function triggerResetAll() {
-      if (confirm("Clear local memory slate completely?")) {
-        resetStateSchema();
-        renderAll();
-      }
+    function triggerResetAll() { 
+      if (confirm("Clear local cache slate completely? This will wipe your storage framework until the next cloud sync.")) { 
+        resetStateSchema(); 
+        renderAll(); 
+      } 
     }
-
-    function renderAll() {
-      renderMetrics();
-      runFilters();
-      renderFormStars();
-      renderWishlist();
-      renderLendingModule();
+    
+    function renderAll() { 
+      renderMetrics(); 
+      runFilters(); 
+      renderFormStars(); 
+      renderWishlist(); 
+      renderLendingModule(); 
     }
 
     let terminalCollapsed = false;
     function toggleTerminalCollapse() {
-      const term = document.getElementById('log-terminal');
-      const icon = document.getElementById('terminal-toggle-icon');
+      const term = document.getElementById('log-terminal'); 
+      const icon = document.getElementById('terminal-toggle-icon'); 
       terminalCollapsed = !terminalCollapsed;
       if (term) term.classList.replace(terminalCollapsed ? 'h-40' : 'h-9', terminalCollapsed ? 'h-9' : 'h-40');
       if (icon) icon.className = terminalCollapsed ? "w-4.5 h-4.5 rotate-180 transition-transform" : "w-4.5 h-4.5 transition-transform";
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadCacheData();
-      setTheme(state.currentTheme || 'rose');
+      loadCacheData(); 
+      setTheme(state.currentTheme || 'rose'); 
       switchTab('home');
-      const fBox = document.getElementById('pin-1');
+      const fBox = document.getElementById('pin-1'); 
       if (fBox) fBox.focus();
     });
   </script>
