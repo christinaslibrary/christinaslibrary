@@ -1209,7 +1209,7 @@
       const btn = document.getElementById('btn-sync-trigger'); 
       if (btn) { btn.disabled = true; btn.textContent = "Processing sync payload handshakes..."; }
       addLog("Preparing bidirectional sync payload matrix strings...", "info");
-      const endpoint = "https://script.google.com/macros/s/AKfycbzS-77IouqmtfH-hXMWGRjrxq73XpdIh9e6zg7HsVYX3Qn3fIuIaP7EyczBDn4HR_jfJg/exec";
+      const endpoint = "https://script.google.com/macros/s/AKfycbwe1j8HFRh1KxAr9YZfFaAbUiIlYm759tIOQmSB51UafE4RPEkmlaxo57FEwtI0BkvzzA/exec";
       try {
         const mappedPayload = state.books.map(b => ({ id: b.id, isbnUid: b.isbn || '', title: b.title || 'Untitled', authors: b.author || 'Unknown', genre: b.genre || 'General', pages: parseInt(b.totalPages) || 0, currentPage: parseInt(b.currentPage) || 0, readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", borrower: b.lendedTo || '', dateLent: b.dateLent || '', coverUrl: b.coverUrl || '', comment: b.notes || '', status: b.status || 'Active' }));
         const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: mappedPayload }) });
