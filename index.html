@@ -535,8 +535,11 @@
               <p class="font-mono text-txs">Local Index: <span id="modal-id" class="text-tx font-bold select-all">None</span></p>
             </div>
             
-            <div id="modal-rating-stars-container" class="flex gap-1 text-yellow-500">
-              </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-mono text-txs uppercase font-bold">Librarian Asset Rating</label>
+              <div id="modal-rating-stars-container" class="flex gap-1.5 text-yellow-500">
+                </div>
+            </div>
           </div>
         </div>
 
@@ -623,6 +626,8 @@
   </footer>
 
   <script>
+    const endpoint = "https://script.google.com/macros/s/AKfycby1njtHqCEgiQdGe7PfFuxa68UqrfYcmx_Kh-Gdj4Xf_G3i70gXgTz0pX4F8xdofy7GpA/exec";
+
     function handlePinNavigation(current, nextFieldId, prevFieldId) {
       current.value = current.value.replace(/[^0-9]/g, '');
       if (current.id === 'pin-4' && current.value.length === 1) {
@@ -689,7 +694,7 @@
           if (!state.wishlist) state.wishlist = [];
           if (!state.lendingLog) state.lendingLog = [];
         } catch (e) { 
-          console.error("Corrupted local application cache state profile.");
+          console.error("Corrupted local cache profiles detected.");
           resetStateSchema(); 
         }
       } else { 
@@ -767,12 +772,12 @@
       renderAll();
     }
 
-    function drawStarsHtml(ratingValue, max = 5, isClickable = false) {
+    function drawStarsHtml(ratingValue, max = 5, isClickable = false, clickHandlerName = 'setFormRating') {
       let stars = '';
       for (let s = 1; s <= max; s++) {
         const starClass = s <= ratingValue ? 'text-yellow-400 fill-yellow-400' : 'text-zinc-400';
         if (isClickable) {
-          stars += `<i data-lucide="star" onclick="setFormRating(${s})" class="w-5 h-5 cursor-pointer hover:scale-110 transition ${starClass}"></i>`;
+          stars += `<i data-lucide="star" onclick="${clickHandlerName}(${s})" class="w-5 h-5 cursor-pointer hover:scale-110 transition ${starClass}"></i>`;
         } else {
           stars += `<i data-lucide="star" class="w-4 h-4 ${starClass}"></i>`;
         }
@@ -789,9 +794,25 @@
     function renderFormStars() { 
       const c = document.getElementById('form-ratings-container'); 
       if (c) { 
-        c.innerHTML = drawStarsHtml(state.selectedRatingForm, 5, true); 
+        c.innerHTML = drawStarsHtml(state.selectedRatingForm, 5, true, 'setFormRating'); 
         lucide.createIcons(); 
       } 
+    }
+
+    // MODAL-LEVEL STAR SELECTOR DRIVER
+    function setModalRating(v) {
+      const index = state.books.findIndex(b => b.id === state.activeModalBookId);
+      if (index === -1) return;
+      state.books[index].rating = v;
+      saveCacheData();
+      
+      // Instantly redraw the modal star header layer
+      const container = document.getElementById('modal-rating-stars-container');
+      if (container) {
+        container.innerHTML = drawStarsHtml(v, 5, true, 'setModalRating');
+        lucide.createIcons();
+      }
+      renderAll();
     }
 
     function renderBookCoverElementHtml(book) {
@@ -923,11 +944,14 @@
       document.getElementById('modal-progress-bar').style.width = `${pctValue}%`; 
       document.getElementById('modal-input-curr-page').value = book.currentPage || 0;
       document.getElementById('modal-cover-container').innerHTML = renderBookCoverElementHtml(book); 
-      document.getElementById('modal-rating-stars-container').innerHTML = drawStarsHtml(book.rating);
+      
+      // FIXED: Draw stars as INTERACTIVE/CLICKABLE inside detail modal views
+      document.getElementById('modal-rating-stars-container').innerHTML = drawStarsHtml(book.rating || 0, 5, true, 'setModalRating');
       
       const modal = document.getElementById('detail-modal'); 
       modal.classList.remove('hidden'); 
       modal.classList.add('flex');
+      lucide.createIcons();
     }
 
     function closeDetailModal() { 
@@ -950,11 +974,49 @@
       renderAll();
     }
 
-    function triggerBookDelete() { 
+    // FIXED OPTIMIZATION ENGINE: BACKGROUND PURGE INITIATOR
+    async function triggerBookDelete() { 
       const index = state.books.findIndex(b => b.id === state.activeModalBookId); 
       if (index === -1) return; 
-      if (confirm(`Confirm deletion flag assignment tracking updates?`)) { 
-        state.books[index].status = "Deleted"; 
+      
+      if (confirm(`Confirm deletion flag assignment tracking updates? This will immediately purge it from the sheet.`)) { 
+        const targetBook = state.books[index];
+        
+        // Flag local array instantly to hide it from screen views
+        targetBook.status = "Deleted";
+        addLog(`Initiating real-time background purge handshake for: "${targetBook.title}"`, "warning");
+        
+        // Assemble dedicated single-asset purge bundle
+        const deletionPayload = [{
+          id: targetBook.id,
+          isbnUid: targetBook.isbn || '',
+          title: targetBook.title,
+          authors: targetBook.author || 'Unknown',
+          pages: parseInt(targetBook.totalPages) || 0,
+          currentPage: parseInt(targetBook.currentPage) || 0,
+          readStatus: "Deleted",
+          status: "Deleted"
+        }];
+
+        // Fire real-time asynchronous fetch dispatch to Sheets
+        fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: deletionPayload })
+        })
+        .then(res => res.json())
+        .then(serverData => {
+          if (serverData.status === "success") {
+            addLog(`Successfully deleted asset from cloud registry files.`, "success");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          addLog("Real-time cloud database update failed, row will scrub on next full sync.", "warning");
+        });
+
+        // Slice out of cache memory and close context frames instantly
+        state.books = state.books.filter(b => b.id !== targetBook.id);
         saveCacheData(); 
         closeDetailModal(); 
         renderAll(); 
@@ -1209,7 +1271,6 @@
       if (btn) { btn.disabled = true; btn.textContent = "Processing sync payload handshakes..."; }
       addLog("Preparing bidirectional sync payload matrix strings...", "info");
       
-      const endpoint = "https://script.google.com/macros/s/AKfycby1njtHqCEgiQdGe7PfFuxa68UqrfYcmx_Kh-Gdj4Xf_G3i70gXgTz0pX4F8xdofy7GpA/exec";
       try {
         const mappedPayload = state.books.map(b => ({ 
           id: b.id, 
@@ -1237,7 +1298,6 @@
           let updatedBooksList = [...state.books];
           
           serverData.books.forEach(cloudBook => {
-            // CRITICAL FIXED IDENTIFIER MATCH ENGINE: Match strictly on cloud ID or unique barcode strings
             const cloudBookId = String(cloudBook.id || '').trim();
             const cloudIsbn = String(cloudBook.isbnuid || cloudBook.isbnUid || '').trim(); 
             const cloudTitle = String(cloudBook.title || '').trim().toLowerCase();
@@ -1258,7 +1318,6 @@
                 const cloudCover = cloudBook.coverurl || cloudBook.coverUrl || ''; 
                 const secureCover = (localBook.coverUrl && !localBook.coverUrl.includes('placeholder') && localBook.coverUrl !== 'N/A') ? localBook.coverUrl : cloudCover;
                 
-                // Keep the structural ID intact so cards don't link scramble on subsequent data pushes
                 updatedBooksList[existingIdx] = { 
                   ...localBook, 
                   currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0, 
