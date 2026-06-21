@@ -34,28 +34,37 @@
   </script>
 
   <style>
-    /* CSS Theme Definitions & Dynamic Properties */
+    /* CSS Theme Definitions & Dynamic Properties mapped directly to MainActivity v2.00 design tokens */
     :root {
       transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
     }
     
     .theme-rose {
-      --b:#FCFAF9; --bs:#F5EBEB; --tx:#2C1E21; --txs:#5C4E51; --ac:#E8C5C8; --ach:#D4A3A7; --acm:#F9EDEE; --bd:#E8C5C8; --g:rgba(232,197,200,0.45); --font:'Playfair Display', serif;
+      --b:#211124; --bs:#1E1020; --tx:#FAEDE3; --txs:#C09FA4; --ac:#D4AF37; --ach:#B8952E; --acm:#2C192E; --bd:#C09FA4; --g:rgba(212,175,55,0.3); --font:'Playfair Display', serif;
     }
     .theme-wildcat {
-      --b:#FAF9F6; --bs:#EFECE1; --tx:#1A0D2E; --txs:#4A3C5C; --ac:#512888; --ach:#3D1C68; --acm:#EADCFB; --bd:#DDD7CD; --g:rgba(81,40,136,0.35); --font:'Space Grotesk', sans-serif;
+      --b:#F4F3EE; --bs:#DDD7CD; --tx:#1A0D2E; --txs:#4A3C5C; --ac:#512888; --ach:#3D1C68; --acm:#FFFFFF; --bd:#DDD7CD; --g:rgba(81,40,136,0.35); --font:'Space Grotesk', sans-serif;
     }
     .theme-dark {
-      --b:#070708; --bs:#141415; --tx:#00FFCC; --txs:#8A9F9B; --ac:#FF007F; --ach:#D6006A; --acm:#250E18; --bd:#2E2E31; --g:rgba(255,0,127,0.4); --font:'Space Grotesk', sans-serif;
+      --b:#121212; --bs:#1E1E1E; --tx:#E5E5E5; --txs:#8A9F9B; --ac:#00FFCC; --ach:#00D1A7; --acm:#1E1E1E; --bd:#333333; --g:rgba(0,255,204,0.25); --font:'Space Grotesk', sans-serif;
     }
     .theme-lavender {
-      --b:#F8F5FC; --bs:#E8DFF5; --tx:#2D1E4E; --txs:#513E7C; --ac:#8338EC; --ach:#7320D6; --acm:#F2EBFD; --bd:#DCD0F0; --g:rgba(131,56,236,0.3); --font:'Playfair Display', serif;
+      --b:#F9F6FA; --bs:#E8DFF5; --tx:#331D42; --txs:#5E3C75; --ac:#8B6C9E; --ach:#735684; --acm:#FFFFFF; --bd:#D6C7E1; --g:rgba(139,108,158,0.3); --font:'Playfair Display', serif;
     }
     .theme-sage {
-      --b:#F7F6F3; --bs:#E2DDD5; --tx:#1B261D; --txs:#3A4A3E; --ac:#7A8B7B; --ach:#5F7061; --acm:#E3E9E4; --bd:#CCC4B8; --g:rgba(122,139,123,0.35); --font:'Merriweather', serif;
+      --b:#FAF7F2; --bs:#E2DDD5; --tx:#202A21; --txs:#3E503F; --ac:#526E53; --ach:#3F5640; --acm:#FFFFFF; --bd:#C3D3C4; --g:rgba(82,110,83,0.35); --font:'Merriweather', serif;
     }
     .theme-ocean {
-      --b:#F4F9FC; --bs:#D2E5F2; --tx:#0A2540; --txs:#354E6B; --ac:#0073E6; --ach:#0062C4; --acm:#E1F0FF; --bd:#ADCBE3; --g:rgba(0,115,230,0.35); --font:'Outfit', sans-serif;
+      --b:#F0F5F8; --bs:#D2E5F2; --tx:#0F1E29; --txs:#1B3D55; --ac:#2E6181; --ach:#224A63; --acm:#FFFFFF; --bd:#BACEDB; --g:rgba(46,97,129,0.35); --font:'Outfit', sans-serif;
+    }
+    .theme-shape {
+      --b:#0C0709; --bs:#151618; --tx:#D5D8DC; --txs:#D35400; --ac:#2980B9; --ach:#21618C; --acm:#151618; --bd:#D35400; --g:rgba(211,84,0,0.3); --font:'Space Grotesk', sans-serif;
+    }
+    .theme-float {
+      --b:#111411; --bs:#1A1B18; --tx:#BDC3C7; --txs:#C0392B; --ac:#F1C40F; --ach:#D4AC0D; --acm:#1A1B18; --bd:#C0392B; --g:rgba(192,57,43,0.35); --font:'Space Grotesk', sans-serif;
+    }
+    .theme-neon {
+      --b:#0A1C30; --bs:#112643; --tx:#E5E8E8; --txs:#00FFFF; --ac:#FFFF007F; --ach:#FF0055; --acm:#112643; --bd:#00FFFF; --g:rgba(0,255,255,0.4); --font:'Space Grotesk', sans-serif;
     }
 
     body {
@@ -67,9 +76,7 @@
 
     /* Multi-layered elegant paper depth shadow */
     .glass {
-      background: var(--card-bg, rgba(255, 255, 255, 0.92));
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: var(--acm);
       border: 1px solid var(--bd);
       box-shadow: 
         0 1px 2px rgba(0,0,0,0.01),
@@ -77,10 +84,6 @@
         0 16px 32px -8px rgba(44, 30, 33, 0.03);
     }
     
-    .theme-dark .glass {
-      --card-bg: rgba(15, 15, 18, 0.85);
-    }
-
     .card-lift {
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
     }
@@ -197,32 +200,50 @@
 
       <section id="sect-home" class="space-y-6">
         
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="bg-bs/40 p-4 rounded-xl border border-bd flex items-center gap-4">
-            <div class="p-3 rounded-lg bg-ac/20 text-tx flex-shrink-0">
-              <i data-lucide="library" class="w-6 h-6"></i>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div class="bg-bs/40 p-3 rounded-xl border border-bd flex items-center gap-3">
+            <div class="p-2 rounded-lg bg-ac/20 text-tx flex-shrink-0">
+              <i data-lucide="library" class="w-5 h-5"></i>
             </div>
             <div>
-              <p class="text-[11px] uppercase tracking-wider text-txs font-mono">Total Books</p>
-              <h3 id="stat-books-count" class="text-2xl font-bold font-display leading-tight">0</h3>
+              <p class="text-[10px] uppercase tracking-wider text-txs font-mono">Books</p>
+              <h3 id="stat-books-count" class="text-xl font-bold font-display leading-tight">0</h3>
             </div>
           </div>
-          <div class="bg-bs/40 p-4 rounded-xl border border-bd flex items-center gap-4">
-            <div class="p-3 rounded-lg bg-ac/20 text-tx flex-shrink-0">
-              <i data-lucide="bookmark" class="w-6 h-6"></i>
+          <div class="bg-bs/40 p-3 rounded-xl border border-bd flex items-center gap-3">
+            <div class="p-2 rounded-lg bg-ac/20 text-tx flex-shrink-0">
+              <i data-lucide="bookmark" class="w-5 h-5"></i>
             </div>
             <div>
-              <p class="text-[11px] uppercase tracking-wider text-txs font-mono">Cumulative Pages</p>
-              <h3 id="stat-pages-sum" class="text-2xl font-bold font-display leading-tight">0</h3>
+              <p class="text-[10px] uppercase tracking-wider text-txs font-mono">Total Pages</p>
+              <h3 id="stat-pages-sum" class="text-xl font-bold font-display leading-tight">0</h3>
             </div>
           </div>
-          <div class="bg-bs/40 p-4 rounded-xl border border-bd flex items-center gap-4">
-            <div id="gauge-ring" class="p-3 rounded-lg bg-ac/20 text-tx flex-shrink-0 relative">
-              <i data-lucide="activity" class="w-6 h-6 animate-pulse"></i>
+          <div class="bg-bs/40 p-3 rounded-xl border border-bd flex items-center gap-3">
+            <div class="p-2 rounded-lg bg-ac/20 text-tx flex-shrink-0">
+              <i data-lucide="activity" class="w-5 h-5 animate-pulse"></i>
             </div>
-            <div class="flex-grow">
-              <p class="text-[11px] uppercase tracking-wider text-txs font-mono">Read Pages Metric</p>
-              <h3 id="stat-reading" class="text-2xl font-bold font-display leading-tight">0</h3>
+            <div>
+              <p class="text-[10px] uppercase tracking-wider text-txs font-mono">Read Pages</p>
+              <h3 id="stat-reading" class="text-xl font-bold font-display leading-tight">0</h3>
+            </div>
+          </div>
+          <div class="bg-bs/40 p-3 rounded-xl border border-bd flex items-center gap-3">
+            <div class="p-2 rounded-lg bg-ac/20 text-tx flex-shrink-0">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="text-[10px] uppercase tracking-wider text-txs font-mono">Completed</p>
+              <h3 id="stat-completed-count" class="text-xl font-bold font-display leading-tight">0</h3>
+            </div>
+          </div>
+          <div class="bg-bs/40 p-3 rounded-xl border border-bd flex items-center gap-3 col-span-2 sm:col-span-1">
+            <div class="p-2 rounded-lg bg-ac/20 text-tx flex-shrink-0">
+              <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <p class="text-[10px] uppercase tracking-wider text-txs font-mono">Reading Now</p>
+              <h3 id="stat-inprogress-count" class="text-xl font-bold font-display leading-tight">0</h3>
             </div>
           </div>
         </div>
@@ -268,9 +289,7 @@
           </div>
         </div>
 
-        <div id="catalog-canvas" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          </div>
-
+        <div id="catalog-canvas" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
       </section>
 
       <section id="sect-add" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -327,8 +346,7 @@
 
             <div>
               <label class="block text-xs font-mono text-txs mb-1">Rating out of 5 Stars</label>
-              <div class="flex gap-1.5" id="form-ratings-container">
-                </div>
+              <div class="flex gap-1.5" id="form-ratings-container"></div>
               <input type="hidden" id="add-rating" value="0">
             </div>
 
@@ -342,7 +360,6 @@
             </button>
           </form>
         </div>
-
       </section>
 
       <section id="sect-wishlist" class="hidden space-y-6">
@@ -381,10 +398,8 @@
               <span id="wishlist-count-badge" class="px-2.5 py-0.5 text-xs font-mono rounded-full bg-ac text-b font-semibold">0 items</span>
             </div>
             
-            <div id="wishlist-table-container" class="space-y-4">
-              </div>
+            <div id="wishlist-table-container" class="space-y-4"></div>
           </div>
-
         </div>
       </section>
 
@@ -420,8 +435,7 @@
                   <th class="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="lending-tbody" class="divide-y divide-bd/60 text-tx">
-                </tbody>
+              <tbody id="lending-tbody" class="divide-y divide-bd/60 text-tx"></tbody>
             </table>
           </div>
         </div>
@@ -435,7 +449,6 @@
             <p class="text-txs italic">No lending history recorded yet.</p>
           </div>
         </div>
-
       </section>
 
       <section id="sect-sync" class="hidden space-y-8">
@@ -443,41 +456,22 @@
         <div class="bg-bs/40 p-5 rounded-xl border border-bd space-y-4">
           <div class="flex items-center gap-2">
             <i data-lucide="palette" class="w-5 h-5 text-tx"></i>
-            <h3 class="font-display font-semibold text-lg">Cinematic Interactive Accent Palette</h3>
+            <h3 class="font-display font-semibold text-lg">Theme Selector Deck</h3>
           </div>
-          <p class="text-xs text-txs leading-relaxed">Swap the visual profile of your dashboard instantly. Custom properties driver applies a seamless fading cross-transition across all cards, panels, and borders.</p>
+          <p class="text-xs text-txs leading-relaxed">Condense your app appearance workspace. Dropdown selection engine maps directly to SharedPreferences layout logic.</p>
           
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            <button onclick="setTheme('rose')" class="p-3 rounded-lg border border-bd text-left flex flex-col justify-between hover:scale-102 transition shadow-sm bg-[#FCFAF9] text-[#2C1E21] border-[#E8C5C8] relative">
-              <span class="text-xs font-semibold">1. Rose Gold</span>
-              <span class="text-[9px] uppercase font-mono opacity-80 mt-2">v1.0 Original</span>
-              <div class="w-3 h-3 rounded-full bg-[#E8C5C8] absolute right-3 bottom-3 border"></div>
-            </button>
-            <button onclick="setTheme('wildcat')" class="p-3 rounded-lg border border-bd text-left flex flex-col justify-between hover:scale-102 transition shadow-sm bg-[#FAF9F6] text-[#1A0D2E] border-[#DDD7CD] relative">
-              <span class="text-xs font-semibold">2. K-State Wildcat</span>
-              <span class="text-[9px] uppercase font-mono opacity-80 mt-2">Athletic Purple</span>
-              <div class="w-3 h-3 rounded-full bg-[#512888] absolute right-3 bottom-3 border"></div>
-            </button>
-            <button onclick="setTheme('dark')" class="p-3 rounded-lg border border-bd text-left flex flex-col justify-between hover:scale-102 transition shadow-sm bg-[#070708] text-[#00FFCC] border-[#2E2E31] relative">
-              <span class="text-xs font-semibold">3. Obsidian Dark</span>
-              <span class="text-[9px] uppercase font-mono opacity-80 mt-2">Midnight Neon</span>
-              <div class="w-3 h-3 rounded-full bg-[#FF007F] absolute right-3 bottom-3 border"></div>
-            </button>
-            <button onclick="setTheme('lavender')" class="p-3 rounded-lg border border-bd text-left flex flex-col justify-between hover:scale-102 transition shadow-sm bg-[#F8F5FC] text-[#2D1E4E] border-[#DCD0F0] relative">
-              <span class="text-xs font-semibold">4. Lavender Dream</span>
-              <span class="text-[9px] uppercase font-mono opacity-80 mt-2">Pastel Violet</span>
-              <div class="w-3 h-3 rounded-full bg-[#8338EC] absolute right-3 bottom-3 border"></div>
-            </button>
-            <button onclick="setTheme('sage')" class="p-3 rounded-lg border border-bd text-left flex flex-col justify-between hover:scale-102 transition shadow-sm bg-[#F7F6F3] text-[#1B261D] border-[#CCC4B8] relative">
-              <span class="text-xs font-semibold">5. Sage Garden</span>
-              <span class="text-[9px] uppercase font-mono opacity-80 mt-2">Earthy Greens</span>
-              <div class="w-3 h-3 rounded-full bg-[#7A8B7B] absolute right-3 bottom-3 border"></div>
-            </button>
-            <button onclick="setTheme('ocean')" class="p-3 rounded-lg border border-bd text-left flex flex-col justify-between hover:scale-102 transition shadow-sm bg-[#F4F9FC] text-[#0A2540] border-[#ADCBE3] relative">
-              <span class="text-xs font-semibold">6. Ocean Breeze</span>
-              <span class="text-[9px] uppercase font-mono opacity-80 mt-2">Calming Blue</span>
-              <div class="w-3 h-3 rounded-full bg-[#0073E6] absolute right-3 bottom-3 border"></div>
-            </button>
+          <div class="relative w-full sm:w-72">
+            <select id="theme-dropdown-selector" onchange="setTheme(this.value)" class="w-full bg-bs/60 border border-bd rounded-lg px-3 py-2.5 text-xs text-tx font-bold focus:outline-none focus:border-ac">
+              <option value="rose">Original Rose Gold</option>
+              <option value="wildcat">K-State Wildcat</option>
+              <option value="dark">High-Contrast Dark</option>
+              <option value="lavender">Lavender Dream</option>
+              <option value="sage">Sage Garden</option>
+              <option value="ocean">Ocean Breeze</option>
+              <option value="shape">The Shape</option>
+              <option value="float">You'll Float Too</option>
+              <option value="neon">Liquid Neon</option>
+            </select>
           </div>
         </div>
 
@@ -503,7 +497,6 @@
             <i data-lucide="refresh-cw" class="w-5 h-5"></i> Sync Library Database
           </button>
         </div>
-
       </section>
 
     </div>
@@ -537,8 +530,7 @@
             
             <div class="space-y-1">
               <label class="block text-[10px] font-mono text-txs uppercase font-bold">Librarian Asset Rating</label>
-              <div id="modal-rating-stars-container" class="flex gap-1.5 text-yellow-500">
-                </div>
+              <div id="modal-rating-stars-container" class="flex gap-1.5 text-yellow-500"></div>
             </div>
           </div>
         </div>
@@ -591,8 +583,7 @@
       <div class="space-y-3 text-xs">
         <div>
           <label class="block font-mono text-txs mb-1">Select Asset to Allocate:</label>
-          <select id="lend-book-selector" class="w-full bg-b border border-bd rounded-lg p-2 focus:outline-none focus:border-ac text-tx">
-            </select>
+          <select id="lend-book-selector" class="w-full bg-b border border-bd rounded-lg p-2 focus:outline-none focus:border-ac text-tx"></select>
         </div>
         <div>
           <label class="block font-mono text-txs mb-1">Receiver (Borrower) Name:</label>
@@ -621,8 +612,7 @@
         <button type="button" class="text-txs hover:text-tx"><i data-lucide="chevrons-down" id="terminal-toggle-icon" class="w-4.5 h-4.5 rotate-180"></i></button>
       </div>
     </div>
-    <div id="terminal-feed" class="p-4 overflow-y-auto flex-grow font-mono text-[10px] space-y-1.5 bg-black/95 select-text text-zinc-300 leading-normal">
-      </div>
+    <div id="terminal-feed" class="p-4 overflow-y-auto flex-grow font-mono text-[10px] space-y-1.5 bg-black/95 select-text text-zinc-300 leading-normal"></div>
   </footer>
 
   <script>
@@ -740,6 +730,10 @@
       document.documentElement.classList.add(`theme-${themeName}`);
       state.currentTheme = themeName; 
       saveCacheData();
+      
+      const dropdown = document.getElementById('theme-dropdown-selector');
+      if (dropdown) dropdown.value = themeName;
+
       const marquee = document.getElementById('stadium-marquee');
       if (marquee) { 
         if (themeName === 'wildcat') marquee.classList.remove('hidden'); 
@@ -764,7 +758,7 @@
           if (tabId === 'home') textNode.textContent = "“A room without books is like a body without a soul.” — Cicero";
           else if (tabId === 'add') textNode.textContent = "“An investment in knowledge pays the best interest.” — Benjamin Franklin";
           else if (tabId === 'wishlist') textNode.textContent = "“The expectation of future volumes forms the horizon of the mind.”";
-          else if (tabId === 'lending') textNode.textContent = "“A book lent is a traveler sent on an unknown expedition.”";
+          else if (tabId === 'lending') textNode.textContent = "“ A book lent is a traveler sent on an unknown expedition.”";
           else if (tabId === 'sync') textNode.textContent = "⚙️ BILATERAL PARITY LOOP DISPATCHER STATUS: ARMED AND SECURED";
           textNode.style.opacity = 1;
         }, 250);
@@ -799,14 +793,12 @@
       } 
     }
 
-    // MODAL-LEVEL STAR SELECTOR DRIVER
     function setModalRating(v) {
       const index = state.books.findIndex(b => b.id === state.activeModalBookId);
       if (index === -1) return;
       state.books[index].rating = v;
       saveCacheData();
       
-      // Instantly redraw the modal star header layer
       const container = document.getElementById('modal-rating-stars-container');
       if (container) {
         container.innerHTML = drawStarsHtml(v, 5, true, 'setModalRating');
@@ -830,17 +822,30 @@
     function renderMetrics() {
       const activeBooks = state.books.filter(b => b.status !== 'Deleted'); 
       document.getElementById('stat-books-count').textContent = activeBooks.length;
+      
       let accumPages = 0; 
       let cumulativeRead = 0;
+      let completedCount = 0; 
+      let inProgressCount = 0;
+
       activeBooks.forEach(b => {
         const total = parseInt(b.totalPages) || 0; 
         const current = parseInt(b.currentPage) || 0; 
         accumPages += total;
-        if (b.status === 'Completed' || b.readStatus === 'Read') cumulativeRead += total; 
-        else if (current > 0) cumulativeRead += Math.min(current, total);
+        
+        if (current >= total && total > 0) {
+          cumulativeRead += total;
+          completedCount++;
+        } else if (current > 0) {
+          cumulativeRead += Math.min(current, total);
+          inProgressCount++;
+        }
       });
+
       document.getElementById('stat-pages-sum').textContent = accumPages.toLocaleString(); 
       document.getElementById('stat-reading').textContent = cumulativeRead.toLocaleString();
+      document.getElementById('stat-completed-count').textContent = completedCount;
+      document.getElementById('stat-inprogress-count').textContent = inProgressCount;
     }
 
     function setFilterStatus(s) {
@@ -883,7 +888,7 @@
       const sortFlt = sortSelect ? sortSelect.value : "date-desc";
       
       let source = state.books.filter(b => b.status !== 'Deleted');
-      if (statusFlt === 'reading') source = source.filter(b => b.currentPage > 0 && b.status !== 'Completed'); 
+      if (statusFlt === 'reading') source = source.filter(b => b.currentPage > 0 && b.currentPage < b.totalPages); 
       else if (statusFlt === 'unread') source = source.filter(b => b.currentPage === 0); 
       else if (statusFlt === 'lent') source = source.filter(b => b.status === 'Lent' || b.lendedTo);
       
@@ -904,8 +909,7 @@
       if (!canvas) return;
       if (booksList.length === 0) { 
         canvas.innerHTML = `<div class="col-span-full py-16 text-center space-y-3"><i data-lucide="book-dashed" class="w-12 h-12 text-txs mx-auto opacity-60"></i><h4 class="font-display font-semibold text-sm">No registered elements matching parameters.</h4></div>`; 
-        lucide.createIcons(); 
-        return; 
+        lucide.createIcons(); return; 
       }
       let markup = '';
       if (state.viewMode === 'grid') {
@@ -925,17 +929,15 @@
           markup += `<div onclick="launchBookDetail('${book.id}')" class="glass card-lift rounded-xl p-4 cursor-pointer select-none border flex flex-col md:flex-row items-start md:items-center justify-between gap-4"><div class="flex items-center gap-4 flex-grow w-full md:w-1/2"><div class="w-12 h-16 rounded shadow overflow-hidden flex-shrink-0">${book.coverUrl ? `<img src="${book.coverUrl}" class="w-full h-full object-cover">` : `<div class="w-full h-full bg-acm flex items-center justify-center"><i data-lucide="book" class="w-5 h-5 text-txs"></i></div>`}</div><div><h4 class="font-display font-semibold text-sm text-tx leading-snug">${book.title}</h4><p class="text-xs text-txs italic">${book.author}</p></div></div><div class="w-full md:w-1/4 space-y-1"><div class="flex justify-between text-[10px] text-txs font-mono"><span>Page ${book.currentPage || 0} / ${book.totalPages}</span></div><div class="w-full h-1.5 bg-bs rounded-full overflow-hidden"><div class="bg-ac h-full" style="width: ${progressPercent}%"></div></div></div></div>`;
         });
       }
-      canvas.innerHTML = markup; 
-      lucide.createIcons();
+      canvas.innerHTML = markup; lucide.createIcons();
     }
 
     function launchBookDetail(bookId) {
       const book = state.books.find(b => b.id === bookId); 
-      if (!book) return; 
-      state.activeModalBookId = bookId;
+      if (!book) return; state.activeModalBookId = bookId;
       document.getElementById('modal-title').textContent = book.title; 
       document.getElementById('modal-author').textContent = book.author; 
-      document.getElementById('modal-isbn').textContent = book.isbn || 'Text Row Record'; 
+      document.getElementById('modal-isbn').textContent = book.isbn || 'Manual Entry Spec'; 
       document.getElementById('modal-id').textContent = book.id; 
       document.getElementById('modal-notes').textContent = book.notes || 'No librarian entries logged.';
       
@@ -945,12 +947,10 @@
       document.getElementById('modal-input-curr-page').value = book.currentPage || 0;
       document.getElementById('modal-cover-container').innerHTML = renderBookCoverElementHtml(book); 
       
-      // FIXED: Draw stars as INTERACTIVE/CLICKABLE inside detail modal views
       document.getElementById('modal-rating-stars-container').innerHTML = drawStarsHtml(book.rating || 0, 5, true, 'setModalRating');
       
       const modal = document.getElementById('detail-modal'); 
-      modal.classList.remove('hidden'); 
-      modal.classList.add('flex');
+      modal.classList.remove('hidden'); modal.classList.add('flex');
       lucide.createIcons();
     }
 
@@ -964,62 +964,35 @@
       const newCurr = parseInt(document.getElementById('modal-input-curr-page').value) || 0; 
       const index = state.books.findIndex(b => b.id === state.activeModalBookId); 
       if (index === -1) return; 
-      const book = state.books[index]; 
-      if (newCurr > book.totalPages) return;
+      const book = state.books[index]; if (newCurr > book.totalPages) return;
       
       book.currentPage = newCurr; 
       book.status = newCurr === 0 ? "Unread" : (newCurr === book.totalPages ? "Completed" : "Currently Reading"); 
-      saveCacheData(); 
-      closeDetailModal(); 
-      renderAll();
+      saveCacheData(); closeDetailModal(); renderAll();
     }
 
-    // FIXED OPTIMIZATION ENGINE: BACKGROUND PURGE INITIATOR
     async function triggerBookDelete() { 
       const index = state.books.findIndex(b => b.id === state.activeModalBookId); 
       if (index === -1) return; 
       
-      if (confirm(`Confirm deletion flag assignment tracking updates? This will immediately purge it from the sheet.`)) { 
+      if (confirm(`Confirm deletion flag assignment tracking updates?`)) { 
         const targetBook = state.books[index];
-        
-        // Flag local array instantly to hide it from screen views
         targetBook.status = "Deleted";
-        addLog(`Initiating real-time background purge handshake for: "${targetBook.title}"`, "warning");
+        addLog(`Initiating cloud purge execution: "${targetBook.title}"`, "warning");
         
-        // Assemble dedicated single-asset purge bundle
-        const deletionPayload = [{
-          id: targetBook.id,
-          isbnUid: targetBook.isbn || '',
-          title: targetBook.title,
-          authors: targetBook.author || 'Unknown',
-          pages: parseInt(targetBook.totalPages) || 0,
-          currentPage: parseInt(targetBook.currentPage) || 0,
-          readStatus: "Deleted",
-          status: "Deleted"
-        }];
+        const deletionPayload = [{ id: targetBook.id, isbnUid: targetBook.isbn || '', title: targetBook.title, readStatus: "Deleted", status: "Deleted" }];
 
-        // Fire real-time asynchronous fetch dispatch to Sheets
         fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: deletionPayload })
         })
         .then(res => res.json())
-        .then(serverData => {
-          if (serverData.status === "success") {
-            addLog(`Successfully deleted asset from cloud registry files.`, "success");
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          addLog("Real-time cloud database update failed, row will scrub on next full sync.", "warning");
-        });
+        .then(serverData => { if (serverData.status === "success") addLog(`Purged entirely from sheet lines.`, "success"); })
+        .catch(err => addLog("Database fallback mapped into local purge queues.", "warning"));
 
-        // Slice out of cache memory and close context frames instantly
         state.books = state.books.filter(b => b.id !== targetBook.id);
-        saveCacheData(); 
-        closeDetailModal(); 
-        renderAll(); 
+        saveCacheData(); closeDetailModal(); renderAll(); 
       } 
     }
 
@@ -1095,43 +1068,23 @@
       
       if (currentPage > totalPages) return;
       upsertDatabaseBook({ title, author, isbn, coverUrl, totalPages, currentPage, rating, notes });
-      ev.target.reset(); 
-      setFormRating(0); 
-      switchTab('home');
+      ev.target.reset(); setFormRating(0); switchTab('home');
     }
 
     function upsertDatabaseBook(meta) {
       const cleanIsbn = meta.isbn ? meta.isbn.trim().replace(/[- ]/g, '') : ''; 
       let index = -1;
-      if (cleanIsbn !== '') { 
-        index = state.books.findIndex(b => b.isbn && b.isbn.trim().replace(/[- ]/g, '') === cleanIsbn); 
-      }
+      if (cleanIsbn !== '') { index = state.books.findIndex(b => b.isbn && b.isbn.trim().replace(/[- ]/g, '') === cleanIsbn); }
+      
       if (index > -1) {
         const existing = state.books[index];
         state.books[index] = { ...existing, title: meta.title || existing.title, author: meta.author || existing.author, currentPage: meta.currentPage !== undefined ? meta.currentPage : existing.currentPage, totalPages: meta.totalPages || existing.totalPages, rating: meta.rating !== undefined ? meta.rating : existing.rating, notes: meta.notes || existing.notes, status: meta.status || (meta.currentPage === 0 ? "Unread" : (meta.currentPage === meta.totalPages ? "Completed" : "Currently Reading")), coverUrl: (existing.coverUrl && !existing.coverUrl.includes('placeholder') && existing.coverUrl !== 'N/A') ? existing.coverUrl : meta.coverUrl };
       } else {
-        const curP = meta.currentPage || 0; 
-        const totP = meta.totalPages || 300;
+        const curP = meta.currentPage || 0; const totP = meta.totalPages || 300;
         const fresh = { id: 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), title: meta.title || 'Untitled Book', author: meta.author || 'Unknown Author', isbn: cleanIsbn, currentPage: curP, totalPages: totP, rating: meta.rating || 0, status: curP === 0 ? "Unread" : (curP === totP ? "Completed" : "Currently Reading"), notes: meta.notes || '', lendedTo: '', savedAt: Date.now(), coverUrl: meta.coverUrl || '' };
         state.books.unshift(fresh);
       }
-      saveCacheData(); 
-      renderAll();
-    }
-
-    async function recoverMissingCovers() {
-      const targets = state.books.filter(b => b.status !== 'Deleted' && (!b.coverUrl || b.coverUrl.trim() === '' || b.coverUrl.includes('placeholder') || b.coverUrl == 'N/A')); 
-      if (targets.length === 0) return;
-      const btn = document.getElementById('btn-recover-covers'); 
-      if (btn) btn.textContent = "Fetching...";
-      
-      for (let book of targets) { 
-        if (!book.isbn || book.isbn.startsWith('MAN-')) continue; 
-        const data = await fetchBookMetadataByISBN(book.isbn); 
-        if (data && data.coverUrl) { book.coverUrl = data.coverUrl; saveCacheData(); runFilters(); } 
-      }
-      if (btn) { btn.innerHTML = `<i data-lucide="image" class="w-3.5 h-3.5"></i> Covers`; lucide.createIcons(); }
-      renderMetrics();
+      saveCacheData(); renderAll();
     }
 
     function saveWishlistItem() {
@@ -1145,8 +1098,7 @@
       document.getElementById('wish-title').value = ''; 
       document.getElementById('wish-author').value = ''; 
       document.getElementById('wish-isbn').value = '';
-      saveCacheData(); 
-      renderWishlist();
+      saveCacheData(); renderWishlist();
     }
 
     function renderWishlist() {
@@ -1163,30 +1115,22 @@
       
       let html = '';
       list.forEach(item => {
-        html += `<div class="glass border rounded-xl p-4 flex justify-between items-center card-lift"><div><h4 class="font-display font-bold text-sm">${item.title}</h4><p class="text-xs text-txs">${item.author}</p></div><div class="flex gap-2"><button onclick="transferWishToLibrary('${item.id}')" class="bg-ac text-b text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-ach shadow transition">Own</button><button onclick="discardWishItem('${item.id}')" class="text-red-500 border border-red-500/30 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
+        html += `<div class="glass border rounded-xl p-4 flex justify-between items-center card-lift"><div><h4 class="font-display font-bold text-sm text-tx">${item.title}</h4><p class="text-xs text-txs">${item.author}</p></div><div class="flex gap-2"><button onclick="transferWishToLibrary('${item.id}')" class="bg-ac text-b text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-ach shadow transition">Own</button><button onclick="discardWishItem('${item.id}')" class="text-red-500 border border-red-500/30 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
       });
-      box.innerHTML = html; 
-      lucide.createIcons();
+      box.innerHTML = html; lucide.createIcons();
     }
 
     function transferWishToLibrary(id) {
       const idx = state.wishlist.findIndex(w => w.id === id); 
       if (idx === -1) return; 
       const w = state.wishlist[idx]; 
-      let pages = prompt(`Enter page length:`, "320"); 
-      if (pages === null) return;
+      let pages = prompt(`Enter page length:`, "320"); if (pages === null) return;
       
       upsertDatabaseBook({ title: w.title, author: w.author, isbn: w.isbn, totalPages: parseInt(pages) || 320, currentPage: 0 });
-      state.wishlist.splice(idx, 1); 
-      saveCacheData(); 
-      renderWishlist();
+      state.wishlist.splice(idx, 1); saveCacheData(); renderWishlist();
     }
     
-    function discardWishItem(id) { 
-      state.wishlist = state.wishlist.filter(w => w.id !== id); 
-      saveCacheData(); 
-      renderWishlist(); 
-    }
+    function discardWishItem(id) { state.wishlist = state.wishlist.filter(w => w.id !== id); saveCacheData(); renderWishlist(); }
 
     function renderLendingModule() {
       const tbody = document.getElementById('lending-tbody'); 
@@ -1212,7 +1156,7 @@
           archiveBox.innerHTML = `<p class="text-txs italic">No historic entries returned.</p>`;
         } else {
           archiveBox.innerHTML = state.lendingLog.map(log => `
-            <div class="py-2 flex justify-between items-center text-[11px] font-mono">
+            <div class="py-2 flex justify-between items-center text-[11px] font-mono border-b border-bd/10">
               <span class="text-tx font-sans font-medium">${log.title}</span>
               <span class="text-txs">Returned from <b class="text-ac">${log.borrower}</b> on ${log.dateLent || ''}</span>
             </div>
@@ -1226,31 +1170,18 @@
       const eligibles = state.books.filter(b => b.status !== 'Deleted' && b.status !== 'Lent' && !b.lendedTo); 
       if (eligibles.length === 0) return;
       if (sel) sel.innerHTML = eligibles.map(b => `<option value="${b.id}">${b.title}</option>`).join('');
-      const dInput = document.getElementById('lend-date'); 
-      if (dInput) dInput.value = new Date().toISOString().split('T')[0];
-      const m = document.getElementById('lend-form-modal'); 
-      if (m) m.classList.remove('hidden');
+      const dInput = document.getElementById('lend-date'); if (dInput) dInput.value = new Date().toISOString().split('T')[0];
+      const m = document.getElementById('lend-form-modal'); if (m) m.classList.remove('hidden');
     }
     
-    function closeLendForm() { 
-      const m = document.getElementById('lend-form-modal'); 
-      if (m) m.classList.add('hidden'); 
-    }
+    function closeLendForm() { const m = document.getElementById('lend-form-modal'); if (m) m.classList.add('hidden'); }
     
     function submitBookLoan() {
       const id = document.getElementById('lend-book-selector').value; 
       const bname = document.getElementById('lend-borrower').value.trim(); 
-      const date = document.getElementById('lend-date').value; 
-      if (!bname) return;
+      const date = document.getElementById('lend-date').value; if (!bname) return;
       const b = state.books.find(x => x.id === id); 
-      if (b) { 
-        b.status = "Lent"; 
-        b.lendedTo = bname; 
-        b.dateLent = date; 
-        saveCacheData(); 
-        closeLendForm(); 
-        renderAll(); 
-      }
+      if (b) { b.status = "Lent"; b.lendedTo = bname; b.dateLent = date; saveCacheData(); closeLendForm(); renderAll(); }
     }
     
     function terminateBookLoan(id) {
@@ -1258,11 +1189,9 @@
       if (b) { 
         if (!state.lendingLog) state.lendingLog = []; 
         state.lendingLog.unshift({ title: b.title, borrower: b.lendedTo, dateLent: b.dateLent }); 
-        b.lendedTo = ''; 
-        b.dateLent = ''; 
+        b.lendedTo = ''; b.dateLent = ''; 
         b.status = b.currentPage === 0 ? "Unread" : (b.currentPage === b.totalPages ? "Completed" : "Currently Reading"); 
-        saveCacheData(); 
-        renderAll(); 
+        saveCacheData(); renderAll(); 
       }
     }
 
@@ -1273,25 +1202,11 @@
       
       try {
         const mappedPayload = state.books.map(b => ({ 
-          id: b.id, 
-          isbnUid: b.isbn || '', 
-          title: b.title || 'Untitled', 
-          authors: b.author || 'Unknown', 
-          genre: b.genre || 'General', 
-          pages: parseInt(b.totalPages) || 0, 
-          currentPage: parseInt(b.currentPage) || 0, 
-          readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), 
-          lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", 
-          borrower: b.lendedTo || '', 
-          dateLent: b.dateLent || '', 
-          coverUrl: b.coverUrl || '', 
-          comment: b.notes || '', 
-          status: b.status || 'Active' 
+          id: b.id, isbnUid: b.isbn || '', title: b.title || 'Untitled', authors: b.author || 'Unknown', genre: b.genre || 'General', pages: parseInt(b.totalPages) || 0, currentPage: parseInt(b.currentPage) || 0, readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", borrower: b.lendedTo || '', dateLent: b.dateLent || '', coverUrl: b.coverUrl || '', comment: b.notes || '', status: b.status || 'Active' 
         }));
 
         const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: mappedPayload }) });
-        const responseText = await response.text(); 
-        const serverData = JSON.parse(responseText);
+        const responseText = await response.text(); const serverData = JSON.parse(responseText);
         
         if (serverData.status === "success" && serverData.books) {
           addLog("Bilateral synchronizer successfully balanced database lines.", "success"); 
@@ -1303,9 +1218,7 @@
             const cloudTitle = String(cloudBook.title || '').trim().toLowerCase();
             
             const existingIdx = updatedBooksList.findIndex(b => 
-              (b.id && b.id === cloudBookId) || 
-              (cloudIsbn !== '' && b.isbn && b.isbn.trim() === cloudIsbn) || 
-              (b.title.toLowerCase().trim() === cloudTitle)
+              (b.id && b.id === cloudBookId) || (cloudIsbn !== '' && b.isbn && b.isbn.trim() === cloudIsbn) || (b.title.toLowerCase().trim() === cloudTitle)
             );
             
             const isCloudDeleted = cloudBook.status === "Deleted" || cloudBook.readstatus === "Deleted" || cloudBook.readStatus === "Deleted";
@@ -1324,31 +1237,19 @@
                   totalPages: parseInt(cloudBook.pages) || localBook.totalPages, 
                   lendedTo: cloudBook.lendingstatus === "Lent" ? (cloudBook.borrower || "Guest") : '', 
                   dateLent: cloudBook.datelent || cloudBook.dateLent || '', 
-                  notes: cloudBook.comment || localBook.notes, 
-                  coverUrl: secureCover, 
-                  status: "Active" 
+                  notes: cloudBook.comment || localBook.notes, coverUrl: secureCover, status: "Active" 
                 };
               }
             } else {
               if (!isCloudDeleted) { 
                 updatedBooksList.push({ 
-                  id: cloudBookId || 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), 
-                  title: cloudBook.title, 
-                  author: cloudBook.authors || 'Unknown Author', 
-                  isbn: cloudIsbn, 
-                  currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0, 
-                  totalPages: parseInt(cloudBook.pages) || 300, 
-                  status: parseInt(cloudBook.currentpage) >= parseInt(cloudBook.pages) ? "Completed" : "Unread", 
-                  coverUrl: cloudBook.coverurl || cloudBook.coverUrl || '', 
-                  notes: cloudBook.comment || '', 
-                  savedAt: Date.now() 
+                  id: cloudBookId || 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), title: cloudBook.title, author: cloudBook.authors || 'Unknown Author', isbn: cloudIsbn, currentPage: parseInt(cloudBook.currentpage || cloudBook.currentPage) || 0, totalPages: parseInt(cloudBook.pages) || 300, status: parseInt(cloudBook.currentpage) >= parseInt(cloudBook.pages) ? "Completed" : "Unread", coverUrl: cloudBook.coverurl || cloudBook.coverUrl || '', notes: cloudBook.comment || '', savedAt: Date.now() 
                 }); 
               }
             }
           });
           
-          state.books = updatedBooksList.filter(b => b.status !== "Deleted"); 
-          saveCacheData();
+          state.books = updatedBooksList.filter(b => b.status !== "Deleted"); saveCacheData();
         }
       } catch (err) { 
         console.error(err); 
@@ -1360,34 +1261,23 @@
 
     function triggerResetAll() { 
       if (confirm("Clear local cache slate completely? This will wipe your storage framework until the next cloud sync.")) { 
-        resetStateSchema(); 
-        renderAll(); 
+        resetStateSchema(); renderAll(); 
       } 
     }
     
-    function renderAll() { 
-      renderMetrics(); 
-      runFilters(); 
-      renderFormStars(); 
-      renderWishlist(); 
-      renderLendingModule(); 
-    }
+    function renderAll() { renderMetrics(); runFilters(); renderFormStars(); renderWishlist(); renderLendingModule(); }
 
     let terminalCollapsed = true; 
     function toggleTerminalCollapse() {
-      const term = document.getElementById('log-terminal'); 
-      const icon = document.getElementById('terminal-toggle-icon'); 
+      const term = document.getElementById('log-terminal'); const icon = document.getElementById('terminal-toggle-icon'); 
       terminalCollapsed = !terminalCollapsed;
       if (term) term.classList.replace(terminalCollapsed ? 'h-40' : 'h-9', terminalCollapsed ? 'h-9' : 'h-40');
       if (icon) icon.className = terminalCollapsed ? "w-4.5 h-4.5 rotate-180 transition-transform" : "w-4.5 h-4.5 transition-transform";
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadCacheData(); 
-      setTheme(state.currentTheme || 'rose'); 
-      switchTab('home');
-      const fBox = document.getElementById('pin-1'); 
-      if (fBox) fBox.focus();
+      loadCacheData(); setTheme(state.currentTheme || 'rose'); switchTab('home');
+      const fBox = document.getElementById('pin-1'); if (fBox) fBox.focus();
     });
   </script>
 </body>
