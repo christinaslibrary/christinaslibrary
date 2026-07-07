@@ -978,11 +978,12 @@
       
       if (confirm(`Confirm deletion flag assignment tracking updates?`)) { 
         const targetBook = state.books[index];
-        targetBook.status = "Deleted";
+                targetBook.status = "Deleted";
+        targetBook.isDeleted = true;
+        targetBook.lastUpdated = Date.now();
         addLog(`Initiating cloud purge execution: "${targetBook.title}"`, "warning");
         
-        const deletionPayload = [{ id: targetBook.id, isbnUid: targetBook.isbn || '', title: targetBook.title, readStatus: "Deleted", status: "Deleted" }];
-
+        const deletionPayload = [{ id: targetBook.id, isbnUid: targetBook.isbn || '', title: targetBook.title, readStatus: "Deleted", status: "Deleted", isDeleted: true, lastUpdated: targetBook.lastUpdated }];
         fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -991,8 +992,7 @@
         .then(res => res.json())
         .then(serverData => { if (serverData.status === "success") addLog(`Purged entirely from sheet lines.`, "success"); })
         .catch(err => addLog("Database fallback mapped into local purge queues.", "warning"));
-
-        state.books = state.books.filter(b => b.id !== targetBook.id);
+        
         saveCacheData(); closeDetailModal(); renderAll(); 
       } 
     }
