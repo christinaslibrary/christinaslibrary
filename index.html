@@ -1079,7 +1079,7 @@
       
       if (index > -1) {
         const existing = state.books[index];
-        state.books[index] = { ...existing, title: meta.title || existing.title, author: meta.author || existing.author, currentPage: meta.currentPage !== undefined ? meta.currentPage : existing.currentPage, totalPages: meta.totalPages || existing.totalPages, rating: meta.rating !== undefined ? meta.rating : existing.rating, notes: meta.notes || existing.notes, status: meta.status || (meta.currentPage === 0 ? "Unread" : (meta.currentPage === meta.totalPages ? "Completed" : "Currently Reading")), coverUrl: (existing.coverUrl && !existing.coverUrl.includes('placeholder') && existing.coverUrl !== 'N/A') ? existing.coverUrl : meta.coverUrl };
+        state.books[index] = { ...existing, title: meta.title || existing.title, author: meta.author || existing.author, currentPage: meta.currentPage !== undefined ? meta.currentPage : existing.currentPage, totalPages: meta.totalPages || existing.totalPages, rating: meta.rating !== undefined ? meta.rating : existing.rating, notes: meta.notes || existing.notes, status: meta.status || (meta.currentPage === 0 ? "Unread" : (meta.currentPage === meta.totalPages ? "Completed" : "Currently Reading")), coverUrl: (existing.coverUrl && !existing.coverUrl.includes('placeholder') && existing.coverUrl !== 'N/A') ? existing.coverUrl : meta.coverUrl, lastUpdated: Date.now() };
       } else {
         const curP = meta.currentPage || 0; const totP = meta.totalPages || 300;
         const fresh = { id: 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), title: meta.title || 'Untitled Book', author: meta.author || 'Unknown Author', isbn: cleanIsbn, currentPage: curP, totalPages: totP, rating: meta.rating || 0, status: curP === 0 ? "Unread" : (curP === totP ? "Completed" : "Currently Reading"), notes: meta.notes || '', lendedTo: '', savedAt: Date.now(), coverUrl: meta.coverUrl || '' };
@@ -1203,8 +1203,7 @@
       
       try {
         const mappedPayload = state.books.map(b => ({ 
-          id: b.id, isbnUid: b.isbn || '', title: b.title || 'Untitled', authors: b.author || 'Unknown', genre: b.genre || 'General', pages: parseInt(b.totalPages) || 0, currentPage: parseInt(b.currentPage) || 0, readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", borrower: b.lendedTo || '', dateLent: b.dateLent || '', coverUrl: b.coverUrl || '', comment: b.notes || '', status: b.status || 'Active' 
-        }));
+          id: b.id, isbnUid: b.isbn || '', title: b.title || 'Untitled', authors: b.author || 'Unknown', genre: b.genre || 'General', pages: parseInt(b.totalPages) || 0, currentPage: parseInt(b.currentPage) || 0, readStatus: b.status === "Deleted" ? "Deleted" : (b.currentPage >= b.totalPages && b.totalPages > 0 ? "Read" : "Unread"), lendingStatus: (b.status === "Lent" || b.lendedTo) ? "Lent" : "Available", borrower: b.lendedTo || '', dateLent: b.dateLent || '', coverUrl: b.coverUrl || '', comment: b.notes || '', status: b.status || \'Active\', lastUpdated: b.lastUpdated || b.savedAt || Date.now(), isDeleted: b.status === "Deleted" || b.isDeleted }));
 
         const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "SYNC", email: "christinaslibraryks@gmail.com", books: mappedPayload }) });
         const responseText = await response.text(); const serverData = JSON.parse(responseText);
@@ -1222,7 +1221,7 @@
               (b.id && b.id === cloudBookId) || (cloudIsbn !== '' && b.isbn && b.isbn.trim() === cloudIsbn) || (b.title.toLowerCase().trim() === cloudTitle)
             );
             
-            const isCloudDeleted = cloudBook.status === "Deleted" || cloudBook.readstatus === "Deleted" || cloudBook.readStatus === "Deleted";
+            const isCloudDeleted = cloudBook.status === "Deleted" || cloudBook.readstatus === "Deleted" || cloudBook.readStatus === "Deleted" || cloudBook.isdeleted === true || cloudBook.isDeleted === true;
             
             if (existingIdx >= 0) {
               const localBook = updatedBooksList[existingIdx];
