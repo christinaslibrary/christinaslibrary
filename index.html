@@ -1288,44 +1288,69 @@
 
             try {
                 const response = await fetch(
-                    "https://script.google.com/macros/s/AKfycby1njtHqCEgiQdGe7PfFuxa68UqrfYcmx_Kh-Gdj4Xf_G3i70gXgTz0pX4F8xdofy7GpA/exec", {
-                        method: "POST",
-                        headers: { "Content-Type": "text/plain;charset=utf-8" },
-                        body: JSON.stringify({
-                            action: "SYNC",
-                            email: "christinaslibraryks@gmail.com",
-                            books: []
-                        })
-                    });
+                    "https://script.google.com/macros/s/AKfycby1njtHqCEgiQdGe7PfFuxa68UqrfYcmx_Kh-Gdj4Xf_G3i70gXgTz0pX4F8xdofy7GpA/exec"
+                );
 
                 const data = await response.json();
                 const rawBooks = data.books || [];
 
-                // Filter out deleted books
-                allBooks = rawBooks.filter(book => {
-                    const status = (book.status || '').toLowerCase();
-                    const isDeleted = book.isdeleted === true || book.isDeleted === true || book
-                        .isdeleted === 'true' || book.isDeleted === 'true';
-                    return status !== 'deleted' && !isDeleted;
+                // Normalize keys & handle both format schemas gracefully
+                allBooks = rawBooks.map(book => {
+                    const isbnVal = book.isbn || book.isbnuid || book.isbnUid || '';
+                    const titleVal = book.title || 'Untitled';
+                    const authorsVal = book.authors || book.author || 'Unknown Author';
+                    const genreVal = book.genre || 'Uncategorized';
+                    const pagesVal = parseInt(book.pages || book.pageCount || 0) || 0;
+                    const currentpageVal = parseInt(book.currentpage || book.currentPage || 0) || 0;
+                    
+                    let readstatusVal = 'unread';
+                    if (book.readstatus) {
+                        readstatusVal = book.readstatus.toString().toLowerCase();
+                    } else if (book.isRead === true || book.isRead === 'true') {
+                        readstatusVal = 'read';
+                    }
+
+                    let lendingstatusVal = 'available';
+                    if (book.lendingstatus) {
+                        lendingstatusVal = book.lendingstatus.toString().toLowerCase();
+                    } else if (book.isLent === true || book.isLent === 'true') {
+                        lendingstatusVal = 'lent';
+                    }
+
+                    const borrowerVal = book.borrower || book.lentTo || '';
+                    const datelentVal = book.datelent || book.lentDate || '';
+                    const coverurlVal = book.coverurl || book.coverUrl || '';
+                    const commentVal = book.comment || '';
+                    
+                    let statusVal = 'active';
+                    if (book.status) {
+                        statusVal = book.status.toString().toLowerCase();
+                    } else if (book.isDeleted === true || book.isDeleted === 'true') {
+                        statusVal = 'deleted';
+                    }
+
+                    return {
+                        id: book.id || isbnVal || `${titleVal}_${authorsVal}`,
+                        isbnuid: isbnVal,
+                        title: titleVal,
+                        authors: authorsVal,
+                        genre: genreVal,
+                        pages: pagesVal,
+                        currentpage: currentpageVal,
+                        readstatus: readstatusVal,
+                        lendingstatus: lendingstatusVal,
+                        borrower: borrowerVal,
+                        datelent: datelentVal,
+                        coverurl: coverurlVal,
+                        comment: commentVal,
+                        status: statusVal
+                    };
                 });
 
-                // Normalize keys
-                allBooks = allBooks.map(book => ({
-                    id: book.id,
-                    isbnuid: book.isbnuid || book.isbnUid || '',
-                    title: book.title || 'Untitled',
-                    authors: book.authors || 'Unknown Author',
-                    genre: book.genre || 'Uncategorized',
-                    pages: parseInt(book.pages) || 0,
-                    currentpage: parseInt(book.currentpage) || 0,
-                    readstatus: book.readstatus || 'unread',
-                    lendingstatus: book.lendingstatus || 'available',
-                    borrower: book.borrower || '',
-                    datelent: book.datelent || '',
-                    coverurl: book.coverurl || book.coverUrl || '',
-                    comment: book.comment || '',
-                    status: book.status || 'active',
-                }));
+                // Filter out deleted books
+                allBooks = allBooks.filter(book => {
+                    return book.status !== 'deleted';
+                });
 
                 showToast(`Loaded ${allBooks.length} books successfully ✨`);
                 updateGenreChips();
