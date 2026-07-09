@@ -1093,6 +1093,7 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1njtHqCEgiQdGe7PfFuxa68UqrfYcmx_Kh-Gdj4Xf_G3i70gXgTz0pX4F8xdofy7GpA/exec";
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
@@ -1321,6 +1322,7 @@
                     const datelentVal = book.datelent || book.lentDate || '';
                     const coverurlVal = book.coverurl || book.coverUrl || '';
                     const commentVal = book.comment || '';
+                    const dateAddedVal = book.dateAdded || Date.now();
                     
                     let statusVal = 'active';
                     if (book.status) {
@@ -1328,7 +1330,6 @@
                     } else if (book.isDeleted === true || book.isDeleted === 'true') {
                         statusVal = 'deleted';
                     }
-
                     return {
                         id: book.id || isbnVal || `${titleVal}_${authorsVal}`,
                         isbnuid: isbnVal,
@@ -1343,10 +1344,11 @@
                         datelent: datelentVal,
                         coverurl: coverurlVal,
                         comment: commentVal,
-                        status: statusVal
+                        status: statusVal,
+                        dateAdded: dateAddedVal
                     };
                 });
-
+                
                 // Filter out deleted books
                 allBooks = allBooks.filter(book => {
                     return book.status !== 'deleted';
@@ -1418,7 +1420,7 @@
             } else if (currentSort === 'pages') {
                 result.sort((a, b) => (b.pages || 0) - (a.pages || 0));
             } else if (currentSort === 'date') {
-                result.sort((a, b) => (b.id || 0) - (a.id || 0));
+                result.sort((a, b) => (b.dateAdded || 0) - (a.dateAdded || 0));
             }
 
             // FLIP animation
@@ -1728,6 +1730,32 @@
         }
 
         // ==================== EXTERNAL API ====================
+        async function saveExternalData(updatedBook) {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = "Saving...";
+            btn.disabled = true;
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: "action=update&payload=" + encodeURIComponent(JSON.stringify({ book: updatedBook }))
+                });
+                const result = await response.json();
+                if (result.status === "success") {
+                    btn.textContent = "Saved Successfully!";
+                    showToast("Details saved to catalog");
+                    setTimeout(() => closeModal(), 1000);
+                } else {
+                    btn.textContent = "Failed to save";
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                btn.textContent = "Error saving";
+                btn.disabled = false;
+            }
+        }
+
         async function fetchExternalBookData(book) {
             const modalBlurb = document.getElementById('modalBlurb');
             const modalExternalRating = document.getElementById('modalExternalRating');
@@ -1791,6 +1819,19 @@
                         '<p style="color:var(--muted);font-size:0.75rem;">No description found from external sources.</p>';
                 }
                 modalExternalRating.textContent = extRating;
+                if (blurbText || extRating) {
+                    const saveBtn = document.createElement("button");
+                    saveBtn.className = "btn btn-primary";
+                    saveBtn.style.marginTop = "10px";
+                    saveBtn.style.width = "100%";
+                    saveBtn.textContent = "Save Retrieved Details";
+                    saveBtn.onclick = function() {
+                        const updatedBook = { ...book };
+                        if (blurbText) updatedBook.comment = (updatedBook.comment ? updatedBook.comment + "\n\n" : "") + "Description: " + blurbText;
+                        saveExternalData(updatedBook);
+                    };
+                    modalBlurb.appendChild(saveBtn);
+                }
 
             } catch (err) {
                 console.warn('External API error:', err);
