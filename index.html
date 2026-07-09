@@ -1756,30 +1756,53 @@
             }
         }
 
+        async function fetchWithTimeout(url, timeoutMs = 4000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(id);
+                return response;
+            } catch (err) {
+                clearTimeout(id);
+                throw err;
+            }
+        }
+
         async function fetchExternalBookData(book) {
             const modalBlurb = document.getElementById('modalBlurb');
             const modalExternalRating = document.getElementById('modalExternalRating');
-            const isbn = (book.isbnuid || '').replace(/[-\s]/g, '').trim();
+            const code = (book.isbnuid || '').replace(/[-\s]/g, '').trim();
 
-            if (!isbn || isbn.length < 10) {
+            if (!code) {
                 modalBlurb.innerHTML =
-                    '<p style="color:var(--muted);font-size:0.75rem;">No ISBN available for external lookup.</p>';
+                    '<p style="color:var(--muted);font-size:0.75rem;">No ISBN, UPC, or ASIN available for external lookup.</p>';
                 return;
             }
 
+            // Determine if the code is a standard ISBN or UPC or ASIN
+            const isIsbn = (code.length === 10 || code.length === 13) && /^[0-9]+X?$/i.test(code);
+            const isUpc = code.length === 12 && /^[0-9]+$/.test(code);
+
+            const googleQuery = isIsbn ? `isbn:${code}` : (isUpc ? `upc:${code}` : code);
+            const googleUrl = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(googleQuery)}`;
+            
+            // OpenLibrary bibkeys format for ISBN or generic LCCN/OLID
+            const openLibUrl = isIsbn 
+                ? `https://openlibrary.org/api/books?bibkeys=ISBN:${code}&jscmd=data&format=json`
+                : `https://openlibrary.org/api/books?bibkeys=LCCN:${code}&jscmd=data&format=json`;
+
             try {
                 const [googleResult, openLibResult] = await Promise.allSettled([
-                    fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`).then(r => r.json()),
-                    fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&jscmd=data&format=json`).then(r =>
-                        r.json()),
+                    fetchWithTimeout(googleUrl, 4000).then(r => r.json()),
+                    fetchWithTimeout(openLibUrl, 4000).then(r => r.json()),
                 ]);
 
                 let blurbText = '';
                 let extRating = '';
 
                 // Google Books
-                if (googleResult.status === 'fulfilled' && googleResult.value.items && googleResult.value.items
-                    .length > 0) {
+                if (googleResult.status === 'fulfilled' && googleResult.value && googleResult.value.items && googleResult.value.items.length > 0) {
                     const vol = googleResult.value.items[0].volumeInfo;
                     if (vol.description) {
                         blurbText = vol.description.substring(0, 600) + (vol.description.length > 600 ? '...' : '');
@@ -1790,24 +1813,26 @@
                     if (vol.categories) {
                         // Update genre if missing locally
                         if (!book.genre || book.genre === 'Uncategorized') {
-                            document.getElementById('modalGenre').textContent = vol.categories.join(', ');
+                            const modalGenre = document.getElementById('modalGenre');
+                            if (modalGenre) modalGenre.textContent = vol.categories.join(', ');
                         }
                     }
                 }
 
                 // OpenLibrary
-                if (openLibResult.status === 'fulfilled' && openLibResult.value[`ISBN:${isbn}`]) {
-                    const olData = openLibResult.value[`ISBN:${isbn}`];
-                    if (!blurbText && olData.notes) {
-                        blurbText = olData.notes.substring(0, 600);
-                    }
-                    if (!blurbText && olData.description) {
-                        blurbText = typeof olData.description === 'string' ? olData.description.substring(0,
-                            600) : (olData.description.value || '').substring(0, 600);
-                    }
-                    if (!extRating && olData.ratings_average) {
-                        extRating =
-                            `OpenLibrary: ${olData.ratings_average} / 5`;
+                if (openLibResult.status === 'fulfilled' && openLibResult.value) {
+                    const key = isIsbn ? `ISBN:${code}` : `LCCN:${code}`;
+                    if (openLibResult.value[key]) {
+                        const olData = openLibResult.value[key];
+                        if (!blurbText && olData.notes) {
+                            blurbText = olData.notes.substring(0, 600);
+                        }
+                        if (!blurbText && olData.description) {
+                            blurbText = typeof olData.description === 'string' ? olData.description.substring(0, 600) : (olData.description.value || '').substring(0, 600);
+                        }
+                        if (!extRating && olData.ratings_average) {
+                            extRating = `OpenLibrary: ${olData.ratings_average} / 5`;
+                        }
                     }
                 }
 
