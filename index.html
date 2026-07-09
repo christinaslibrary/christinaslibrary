@@ -947,6 +947,28 @@
                 gap: 8px;
                 font-size: 0.7rem;
             }
+        .search-wrapper input:focus {
+            border-color: var(--gold) !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+            box-shadow: 0 0 10px rgba(200, 162, 109, 0.2);
+            outline: none;
+        }
+        .highlight {
+            background: rgba(200, 162, 109, 0.35);
+            color: #fff;
+            font-weight: 700;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+        @media (max-width: 600px) {
+            .app-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .search-wrapper {
+                max-width: none !important;
+            }
             .list-row {
                 padding: 10px 12px;
                 gap: 10px;
@@ -999,7 +1021,12 @@
             <div class="header-title">
                 <span class="dot"></span> Christina's Library
             </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:1;justify-content:flex-end;">
+                <div class="search-wrapper" style="position:relative;display:flex;align-items:center;min-width:180px;max-width:300px;width:100%;">
+                    <i data-lucide="search" style="position:absolute;left:12px;width:14px;height:14px;color:var(--muted);pointer-events:none;"></i>
+                    <input type="text" id="webSearchInput" placeholder="Search title or author..." style="width:100%;padding:7px 10px 7px 34px;border-radius:20px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.03);color:var(--cream);font-size:0.8rem;outline:none;font-family:'Inter',sans-serif;transition:all 0.3s ease;">
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                 <button class="btn btn-accent" id="syncBtn" title="Sync Catalog">
                     <i data-lucide="refresh-cw" style="width:15px;height:15px;"></i> Sync
                 </button>
@@ -1009,6 +1036,7 @@
                 <button class="btn-icon" id="listViewBtn" title="List View">
                     <i data-lucide="list" style="width:17px;height:17px;"></i>
                 </button>
+                </div>
             </div>
         </header>
 
@@ -1225,6 +1253,14 @@
                 applyFiltersAndSort();
             });
 
+            // Web Search Input
+            const webSearchInput = document.getElementById('webSearchInput');
+            if (webSearchInput) {
+                webSearchInput.addEventListener('input', () => {
+                    applyFiltersAndSort();
+                });
+            }
+
             // Filter chips
             filterBar.querySelectorAll('.chip').forEach(chip => {
                 chip.addEventListener('click', () => {
@@ -1414,6 +1450,16 @@
                 result = result.filter(b => b.genre === currentGenre);
             }
 
+            // Filter by search query
+            const query = (document.getElementById('webSearchInput')?.value || '').toLowerCase().trim();
+            if (query) {
+                result = result.filter(b => 
+                    (b.title || '').toLowerCase().includes(query) || 
+                    (b.authors || '').toLowerCase().includes(query) ||
+                    (b.isbnuid || '').toLowerCase().includes(query)
+                );
+            }
+
             // Sort
             if (currentSort === 'title') {
                 result.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
@@ -1464,10 +1510,32 @@
                 `Showing ${result.length} of ${allBooks.length} books`;
         }
 
+        // ==================== HIGHLIGHT MATCH ====================
+        function highlightMatch(text, query) {
+            if (!text) return '';
+            if (!query) return escapeHTML(text);
+            const queryLower = query.toLowerCase();
+            const textLower = text.toLowerCase();
+            let startIdx = 0;
+            let result = '';
+            while (true) {
+                const idx = textLower.indexOf(queryLower, startIdx);
+                if (idx === -1) {
+                    result += escapeHTML(text.substring(startIdx));
+                    break;
+                }
+                result += escapeHTML(text.substring(startIdx, idx));
+                result += `<span class="highlight">${escapeHTML(text.substring(idx, idx + query.length))}</span>`;
+                startIdx = idx + query.length;
+            }
+            return result;
+        }
+
         // ==================== RENDER BOOKS ====================
         function renderBooks(books) {
             const container = document.getElementById('booksContainer');
             container.innerHTML = '';
+            const webQuery = (document.getElementById('webSearchInput')?.value || '').trim();
 
             if (books.length === 0) {
                 container.innerHTML =
@@ -1544,7 +1612,7 @@
                     // Title overlay
                     const titleOverlay = document.createElement('div');
                     titleOverlay.className = 'book-card-title';
-                    titleOverlay.textContent = book.title;
+                    titleOverlay.innerHTML = highlightMatch(book.title, webQuery);
                     card.appendChild(titleOverlay);
 
                     wrapper.appendChild(card);
@@ -1600,11 +1668,11 @@
                     info.className = 'list-info';
                     const titleEl = document.createElement('div');
                     titleEl.className = 'list-title';
-                    titleEl.textContent = book.title;
+                    titleEl.innerHTML = highlightMatch(book.title, webQuery);
                     info.appendChild(titleEl);
                     const authorEl = document.createElement('div');
                     authorEl.className = 'list-author';
-                    authorEl.textContent = book.authors;
+                    authorEl.innerHTML = highlightMatch(book.authors, webQuery);
                     info.appendChild(authorEl);
                     row.appendChild(info);
 
